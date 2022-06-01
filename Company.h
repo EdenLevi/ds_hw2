@@ -19,15 +19,15 @@ public:
     int id;
     int employee_count;
     int salary; //garbage value
-    Employee *highest_earner_employee;
-    tree<Employee>* employees_pointers;
-    tree<Employee>* employees_pointers_by_salary;
+    Employee* employee_head;
+    tree<Employee> *employees_pointers_by_salary;
+    Company* parent_company;
+
     Company(int value, int company_id);
 
     ~Company() {
-            highest_earner_employee=nullptr;
-            employees_pointers=nullptr;
-            employees_pointers_by_salary=nullptr;
+
+        employees_pointers_by_salary = nullptr;
     };
 
 };

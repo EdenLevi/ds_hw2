@@ -6,7 +6,7 @@
 #define DS_HW1_TREE_H
 
 #include <memory>
-#include "../../Documents/Studying/Technion/Courses/D/MIVNEI/wet1/ds_hw1/library1.h"
+#include "library2.h"
 
 class Company;
 

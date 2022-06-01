@@ -3,7 +3,7 @@
 //
 
 #include "Employee.h"
-#include "../../Documents/Studying/Technion/Courses/D/MIVNEI/wet1/ds_hw1/library1.h"
+#include "library2.h"
 
 using std::shared_ptr;
 
