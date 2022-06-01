@@ -16,10 +16,11 @@ public:
     Company *company;
     int salary;
     int grade;
-    Employee(int id,Company *company, int salary, int grade);
 
-    ~Employee(){
-            company = nullptr;
+    Employee(int id, Company *company, int salary, int grade);
+
+    ~Employee() {
+        company = nullptr;
     };
 };
 

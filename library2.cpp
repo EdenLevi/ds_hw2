@@ -17,7 +17,7 @@ void *Init(int k) {
         return companyArray;
     }
     catch (std::bad_alloc const&) {
-        // do smth if allocation failed
+        return nullptr;
     }
 }
 

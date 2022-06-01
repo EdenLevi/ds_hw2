@@ -19,6 +19,7 @@
 #include <string.h>
 #include "library2.h"
 #include <iostream>
+
 using namespace std;
 
 #ifdef __cplusplus
@@ -54,9 +55,9 @@ static const char *commandStr[] = {
         "AverageBumpGradeBetweenSalaryByGroup ",
         "CompanyValue",
         "BumpGradeToEmployees",
-        "Quit" };
+        "Quit"};
 
-static const char* ReturnValToStr(int val) {
+static const char *ReturnValToStr(int val) {
     switch (val) {
         case SUCCESS:
             return "SUCCESS";
@@ -75,14 +76,14 @@ static const char* ReturnValToStr(int val) {
 #define MAX_STRING_INPUT_SIZE (255)
 #define MAX_BUFFER_SIZE       (255)
 
-#define StrCmp(Src1,Src2) ( strncmp((Src1),(Src2),strlen(Src1)) == 0 )
+#define StrCmp(Src1, Src2) ( strncmp((Src1),(Src2),strlen(Src1)) == 0 )
 
 typedef enum {
     error_free, error
 } errorType;
-static errorType parser(const char* const command);
+static errorType parser(const char *const command);
 
-#define ValidateRead(read_parameters,required_parameters,ErrorString) \
+#define ValidateRead(read_parameters, required_parameters, ErrorString) \
 if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return error; }
 
 static bool isInit = false;
@@ -91,7 +92,7 @@ static bool isInit = false;
 /* main                                                                    */
 /***************************************************************************/
 
-int main(int argc, const char**argv) {
+int main(int argc, const char **argv) {
     char buffer[MAX_STRING_INPUT_SIZE];
 
     // Reading commands
@@ -107,8 +108,8 @@ int main(int argc, const char**argv) {
 /* Command Checker                                                         */
 /***************************************************************************/
 
-static commandType CheckCommand(const char* const command,
-                                const char** const command_arg) {
+static commandType CheckCommand(const char *const command,
+                                const char **const command_arg) {
     if (command == NULL || strlen(command) == 0 || StrCmp("\n", command))
         return (NONE_CMD);
     if (StrCmp("#", command)) {
@@ -129,25 +130,25 @@ static commandType CheckCommand(const char* const command,
 /* Commands Functions                                                      */
 /***************************************************************************/
 
-static errorType OnInit(void** DS, const char* const command);
-static errorType OnAddEmployee(void* DS, const char* const command);
-static errorType OnRemoveEmployee(void* DS, const char* const command);
-static errorType OnAcquireCompany(void* DS, const char* const command);
-static errorType OnEmployeeSalaryIncrease(void* DS, const char* const command);
-static errorType OnPromoteEmployee(void* DS, const char* const command);
-static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void* DS, const char* const command);
-static errorType OnAverageBumpGradeBetweenSalaryByGroup(void* DS, const char* const command);
-static errorType OnCompanyValue(void* DS, const char* const command);
-static errorType OnBumpGradeToEmployees(void* DS, const char* const command);
-static errorType OnQuit(void** DS, const char* const command);
+static errorType OnInit(void **DS, const char *const command);
+static errorType OnAddEmployee(void *DS, const char *const command);
+static errorType OnRemoveEmployee(void *DS, const char *const command);
+static errorType OnAcquireCompany(void *DS, const char *const command);
+static errorType OnEmployeeSalaryIncrease(void *DS, const char *const command);
+static errorType OnPromoteEmployee(void *DS, const char *const command);
+static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void *DS, const char *const command);
+static errorType OnAverageBumpGradeBetweenSalaryByGroup(void *DS, const char *const command);
+static errorType OnCompanyValue(void *DS, const char *const command);
+static errorType OnBumpGradeToEmployees(void *DS, const char *const command);
+static errorType OnQuit(void **DS, const char *const command);
 
 /***************************************************************************/
 /* Parser                                                                  */
 /***************************************************************************/
 
-static errorType parser(const char* const command) {
+static errorType parser(const char *const command) {
     static void *DS = NULL; /* The general data structure */
-    const char* command_args = NULL;
+    const char *command_args = NULL;
     errorType rtn_val = error;
 
     commandType command_val = CheckCommand(command, &command_args);
@@ -203,7 +204,7 @@ static errorType parser(const char* const command) {
 /***************************************************************************/
 /* OnInit                                                                  */
 /***************************************************************************/
-static errorType OnInit(void** DS, const char* const command) {
+static errorType OnInit(void **DS, const char *const command) {
     if (isInit) {
         printf("Init was already called.\n");
         return (error_free);
@@ -224,7 +225,7 @@ static errorType OnInit(void** DS, const char* const command) {
 /***************************************************************************/
 /* OnAddEmployee                                                             */
 /***************************************************************************/
-static errorType OnAddEmployee(void* DS, const char* const command) {
+static errorType OnAddEmployee(void *DS, const char *const command) {
     int employeeID;
     int companyID;
     int grade;
@@ -245,10 +246,10 @@ static errorType OnAddEmployee(void* DS, const char* const command) {
 /***************************************************************************/
 /* OnRemoveEmployee                                                          */
 /***************************************************************************/
-static errorType OnRemoveEmployee(void* DS, const char* const command) {
+static errorType OnRemoveEmployee(void *DS, const char *const command) {
     int employeeID;
     ValidateRead(
-            sscanf(command, "%d", &employeeID),1,
+            sscanf(command, "%d", &employeeID), 1,
             "RemoveEmployee failed.\n");
     StatusType res = RemoveEmployee(DS, employeeID);
 
@@ -264,7 +265,7 @@ static errorType OnRemoveEmployee(void* DS, const char* const command) {
 /***************************************************************************/
 /* OnAcquireCompany                                                            */
 /***************************************************************************/
-static errorType OnAcquireCompany(void* DS, const char* const command) {
+static errorType OnAcquireCompany(void *DS, const char *const command) {
     int companyID1;
     int companyID2;
     double factor;
@@ -283,7 +284,7 @@ static errorType OnAcquireCompany(void* DS, const char* const command) {
 /***************************************************************************/
 /* OnEmployeeSalaryIncrease                                                         */
 /***************************************************************************/
-static errorType OnEmployeeSalaryIncrease(void* DS, const char* const command) {
+static errorType OnEmployeeSalaryIncrease(void *DS, const char *const command) {
     int employeeID;
     int salaryIncrease;
     ValidateRead(sscanf(command, "%d %d", &employeeID, &salaryIncrease), 2,
@@ -303,7 +304,7 @@ static errorType OnEmployeeSalaryIncrease(void* DS, const char* const command) {
 /***************************************************************************/
 /* OnPromoteEmployee                                                         */
 /***************************************************************************/
-static errorType OnPromoteEmployee(void* DS, const char* const command) {
+static errorType OnPromoteEmployee(void *DS, const char *const command) {
     int emplyeeID;
     int bumpGrade;
     ValidateRead(sscanf(command, "%d %d", &emplyeeID, &bumpGrade), 2, "PromoteEmployee failed.\n");
@@ -322,12 +323,12 @@ static errorType OnPromoteEmployee(void* DS, const char* const command) {
 /* OnSumOfBumpGradeBetweenTopWorkersByGroup                                                        */
 /***************************************************************************/
 
-static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup (void* DS, const char* const command) {
+static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void *DS, const char *const command) {
     int companyID;
     int m;
     ValidateRead(sscanf(command, "%d %d", &companyID, &m), 2,
                  "SumOfBumpGradeBetweenTopWorkersByGroup failed.\n");
-    void* sumBumpGrade;
+    void *sumBumpGrade;
     StatusType res = SumOfBumpGradeBetweenTopWorkersByGroup(DS, companyID, m, &sumBumpGrade);
 
     if (res != SUCCESS) {
@@ -345,13 +346,13 @@ static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup (void* DS, const char*
 /* OnAverageBumpGradeBetweenSalaryByGroup                                                        */
 /***************************************************************************/
 
-static errorType OnAverageBumpGradeBetweenSalaryByGroup (void* DS, const char* const command) {
+static errorType OnAverageBumpGradeBetweenSalaryByGroup(void *DS, const char *const command) {
     int companyID;
     int lowerSalary;
     int higherSalary;
     ValidateRead(sscanf(command, "%d %d %d", &companyID, &lowerSalary, &higherSalary), 3,
                  "AverageBumpGradeBetweenSalaryByGroup failed.\n");
-    void* averageBumpGrade;
+    void *averageBumpGrade;
     StatusType res = AverageBumpGradeBetweenSalaryByGroup(DS, companyID, lowerSalary, higherSalary, &averageBumpGrade);
 
     if (res != SUCCESS) {
@@ -369,11 +370,11 @@ static errorType OnAverageBumpGradeBetweenSalaryByGroup (void* DS, const char* c
 /* OnCompanyValue                                                        */
 /***************************************************************************/
 
-static errorType OnCompanyValue(void* DS, const char* const command) {
+static errorType OnCompanyValue(void *DS, const char *const command) {
     int companyID;
     ValidateRead(sscanf(command, "%d", &companyID), 1,
                  "CompanyValue failed.\n");
-    void* standing;
+    void *standing;
     StatusType res = CompanyValue(DS, companyID, &standing);
 
     if (res != SUCCESS) {
@@ -415,7 +416,7 @@ static errorType OnBumpGradeToEmployees(void* DS, const char* const command) {
 /***************************************************************************/
 /* OnQuit                                                                  */
 /***************************************************************************/
-static errorType OnQuit(void** DS, const char* const command) {
+static errorType OnQuit(void **DS, const char *const command) {
     Quit(DS);
     if (*DS != NULL) {
         printf("Quit failed.\n");

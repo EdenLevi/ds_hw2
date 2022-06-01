@@ -16,17 +16,17 @@ public:
     int id; //iterator
     int height;
     Element *element;
-    tree<Element> * left;
-    tree<Element> * right;
+    tree<Element> *left;
+    tree<Element> *right;
 
     tree(int id) : id(id), height(1), element(nullptr), left(nullptr), right(nullptr) {};
 
     tree(int id, Element *element) : id(id), height(1), element(element), left(nullptr), right(nullptr) {};
 
     ~tree() {
-        element= nullptr;
-        left= nullptr;
-        right= nullptr;
+        element = nullptr;
+        left = nullptr;
+        right = nullptr;
     };
 
 
@@ -39,8 +39,8 @@ public:
    * @param status
    * @return
    */
-   template<class Element>
-tree<Element>* eraseElement(tree<Element>* &head,Element *e, bool is_salary,bool is_deep_delete, StatusType *status) {
+template<class Element>
+tree<Element> *eraseElement(tree<Element> *&head, Element *e, bool is_salary, bool is_deep_delete, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
     if (head->id <= 0) {
         *status = INVALID_INPUT;
@@ -62,7 +62,7 @@ tree<Element>* eraseElement(tree<Element>* &head,Element *e, bool is_salary,bool
      * @param tree
      */
 template<class Element>
-void clear_helper(tree<Element>* &tree) {
+void clear_helper(tree<Element> *&tree) {
     if (tree == nullptr) {
         return;
     }
@@ -72,7 +72,7 @@ void clear_helper(tree<Element>* &tree) {
     tree->right = nullptr;
 
     delete tree;
-    tree= nullptr;
+    tree = nullptr;
 }
 
 /**
@@ -82,7 +82,7 @@ void clear_helper(tree<Element>* &tree) {
  * @return
  */
 template<class Element>
-tree<Element>* clear(tree<Element>* &tree) {
+tree<Element> *clear(tree<Element> *&tree) {
     if (tree == nullptr) {
         return nullptr;
     }
@@ -92,7 +92,7 @@ tree<Element>* clear(tree<Element>* &tree) {
     tree->right = nullptr;
 
     delete tree;
-    tree= nullptr;
+    tree = nullptr;
     return nullptr;
 }
 
@@ -103,7 +103,7 @@ tree<Element>* clear(tree<Element>* &tree) {
  * @return
  */
 template<class Element>
-tree<Element>* clearAll(tree<Element>* &tree) {
+tree<Element> *clearAll(tree<Element> *&tree) {
     if (tree == nullptr) {
         return nullptr;
     }
@@ -115,7 +115,7 @@ tree<Element>* clearAll(tree<Element>* &tree) {
     delete tree->element;
     tree->element = nullptr;
     delete tree;
-    tree= nullptr;
+    tree = nullptr;
     return nullptr;
 }
 
@@ -311,8 +311,8 @@ tree<Element> *addElementRecursively(tree<Element> *head, tree<Element> *element
         return left_rot<Element>(head);
     }
 
-    if(is_salary) {
-        if((head->left) && (head->left->id == iterator)) {
+    if (is_salary) {
+        if ((head->left) && (head->left->id == iterator)) {
             // LL
             if (b > 1 && element_tree->element->id > head->left->element->id) {
                 return right_rot<Element>(head);
@@ -323,7 +323,7 @@ tree<Element> *addElementRecursively(tree<Element> *head, tree<Element> *element
                 return right_rot<Element>(head);
             }
         }
-        if((head->right) && (head->right->id == iterator)) {
+        if ((head->right) && (head->right->id == iterator)) {
             // RR
             if (b < -1 && element_tree->element->id < head->right->element->id) {
                 return left_rot<Element>(head);
@@ -351,7 +351,8 @@ tree<Element> *addElementRecursively(tree<Element> *head, tree<Element> *element
  * @return
  */
 template<class Element>
-tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is_salary,bool is_deep_delete, StatusType *status) {
+tree<Element> *
+deleteElementRecursively(tree<Element> *head, Element *e, bool is_salary, bool is_deep_delete, StatusType *status) {
 
     if (head == nullptr || e == nullptr) {
         *status = FAILURE; // already exists in tree
@@ -363,40 +364,40 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
         id = e->salary;
 
     if (id < head->id) {
-        head->left = deleteElementRecursively(head->left, e, is_salary,is_deep_delete, status);
+        head->left = deleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
     } else if (id > head->id) {
-        head->right = deleteElementRecursively(head->right, e, is_salary,is_deep_delete, status);
+        head->right = deleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
     } else if (is_salary && head->element->id != e->id) {
         id = e->id;
         if (id < head->element->id) {
-            head->right = deleteElementRecursively(head->right, e, is_salary,is_deep_delete, status);
+            head->right = deleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
         } else if (id > head->element->id) {
-            head->left = deleteElementRecursively(head->left, e, is_salary,is_deep_delete, status);
+            head->left = deleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
         }
     }
         //found the element to be deleted
     else {
 
         //case of 1-0 child
-        tree<Element> *temp= nullptr;
+        tree<Element> *temp = nullptr;
         if (head->left == nullptr || head->right == nullptr) {
             if (head->left == nullptr && head->right == nullptr) {
                 //make sure that we don't have memory leak at that point, shared ptr suppose to free
                 temp = head;
                 head = nullptr;
-                if(is_deep_delete){
+                if (is_deep_delete) {
                     delete temp->element;
-                    temp->element= nullptr;
+                    temp->element = nullptr;
                 }
             } else {
                 temp = head->left ? head->left : head->right;
-                if(is_deep_delete){
+                if (is_deep_delete) {
                     delete head->element;
                 }
                 head->element = temp->element;
-                head->left=temp->left;
-                head->right=temp->right;
-                head->height=temp->height;
+                head->left = temp->left;
+                head->right = temp->right;
+                head->height = temp->height;
 
                 if (is_salary) {
                     head->id = temp->element->salary;
@@ -416,9 +417,9 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
                 while (temp->left != nullptr) {
                     temp = temp->left;
                 }
-                if(is_deep_delete){
+                if (is_deep_delete) {
                     delete head->element;
-                    is_deep_delete=false;
+                    is_deep_delete = false;
                 }
 
                 head->element = temp->element;
@@ -428,7 +429,7 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
                     head->id = temp->id;
 
                 head->right = deleteElementRecursively(head->right,
-                                                       temp->element, is_salary,is_deep_delete, status);
+                                                       temp->element, is_salary, is_deep_delete, status);
             }
         }
     }
@@ -444,7 +445,7 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
     int b = getBalance(head);;
 
     // LL
-    if ( b > 1 && getBalance(head->left) >= 0) {
+    if (b > 1 && getBalance(head->left) >= 0) {
         return right_rot<Element>(head);
     }
 
@@ -455,12 +456,12 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
     }
 
     // RR
-    if ( b < -1 && getBalance(head->right) <= 0) {
+    if (b < -1 && getBalance(head->right) <= 0) {
         return left_rot<Element>(head);
     }
 
     // RL
-    if ( b < -1 && getBalance(head->right) > 0) {
+    if (b < -1 && getBalance(head->right) > 0) {
         head->right = right_rot<Element>(head->right);
         return left_rot<Element>(head);
     }
