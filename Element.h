@@ -15,8 +15,8 @@ public:
     Employee* employee;
     int id;
     int salary;
-    int l_boys;
     int boys;
+    int l_boys;
     int grades_sum_l_boys;
 
     Element(int id, int salary, Employee* employee, int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
