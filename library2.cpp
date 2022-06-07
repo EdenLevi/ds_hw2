@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "library2.h"
+#include "Company.h"
 #include <iostream>
 
 void *Init(int k) {
     try {
-        int *companyArray = new int[k];
+        Company **companyArray = new Company*[k];
         for (int i = 0; i < k; i++) {
-            companyArray[i] = i;
+            companyArray[i]->value = i;
         }
         return companyArray;
     }
