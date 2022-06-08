@@ -6,9 +6,9 @@
 #define DS_HW2_RANKTREE_H
 
 #include "tree.h"
-#include "Element.h"
+#include "Elementy.h"
 
-class rankTree : public tree<Element> {
+class rankTree : public tree<Elementy> {
 public:
 //  int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
 
@@ -23,7 +23,7 @@ public:
  * @return
  */
 
-tree<Element> *RTleft_rot(tree<Element> *head) {
+tree<Elementy> *RTleft_rot(tree<Elementy> *head) {
 
     int Y_r_boys = head->right->element->boys - head->right->element->l_boys;
 
@@ -35,8 +35,8 @@ tree<Element> *RTleft_rot(tree<Element> *head) {
     // updating x:
     head->element->boys -= (Y_r_boys + 1);
 
-    tree<Element> *temp1 = head->right; // y
-    tree<Element> *temp2 = temp1->left;
+    tree<Elementy> *temp1 = head->right; // y
+    tree<Elementy> *temp2 = temp1->left;
     temp1->left = head; // x
     head->right = temp2;
     int a = getHeight(head->left);
@@ -57,7 +57,7 @@ tree<Element> *RTleft_rot(tree<Element> *head) {
  * @return
  */
 
-tree<Element> *RTright_rot(tree<Element> *head) {
+tree<Elementy> *RTright_rot(tree<Elementy> *head) {
 
     int X_new_boys = head->right->element->boys + 1;
 

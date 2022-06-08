@@ -85,6 +85,11 @@ public:
         }
     }
 
+    tree<Employee> * findMeInHach(int EmployeeID) {
+        tree<Employee>* etz = table[hash(EmployeeID)];
+        return findById<Employee>(etz, EmployeeID);
+    }
+
     void inOrderCopy(tree<Employee> *oldTree) {
         if (oldTree == nullptr) return;
         inOrderCopy(oldTree->left);
