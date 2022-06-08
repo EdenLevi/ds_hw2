@@ -86,7 +86,10 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
 
         //remove from salary tree
         if(empNode->element->salary > 0) {
-            DSS->salaries->
+            //DSS->salaries
+            //// added RTDeleteElement and RTDeleteElementRecursively
+            //// need to make sure they were added properly and use them here
+            //// for salary tree and company salary tree (employee removal)
         }
 
         StatusType status = DSS->employees->remove(employeeID);

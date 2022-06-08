@@ -91,12 +91,12 @@ tree<Element> *RtreeAddElementRecursively(tree<Element> *head, tree<Element> *el
 
 
     if (head->id > iterator) {
-        head->left = addElementRecursively(head->left, element_tree, iterator, is_salary, status);
+        head->left = RtreeAddElementRecursively(head->left, element_tree, iterator, is_salary, status);
         head->left->element->l_boys++;
         head->left->element->grades_sum_l_boys+=element_tree->element->employee->grade;
         head->left->element->boys++;
     } else if (head->id < iterator) {
-        head->right = addElementRecursively(head->right, element_tree, iterator, is_salary, status);
+        head->right = RtreeAddElementRecursively(head->right, element_tree, iterator, is_salary, status);
         head->right->element->boys++;
 
     } else { // cant be equal
@@ -104,10 +104,10 @@ tree<Element> *RtreeAddElementRecursively(tree<Element> *head, tree<Element> *el
             *status = FAILURE; // already exists in tree
             return head; // possibly element_tree
         } else if (head->element->id > element_tree->element->id) {
-            head->right = addElementRecursively(head->right, element_tree, iterator, is_salary, status);
+            head->right = RtreeAddElementRecursively(head->right, element_tree, iterator, is_salary, status);
             head->right->element->boys++;
         } else if (head->element->id < element_tree->element->id) {
-            head->left = addElementRecursively(head->left, element_tree, iterator, is_salary, status);
+            head->left = RtreeAddElementRecursively(head->left, element_tree, iterator, is_salary, status);
             head->left->element->l_boys++;
             head->left->element->grades_sum_l_boys+=element_tree->element->employee->grade;
             head->left->element->boys++;
@@ -203,7 +203,147 @@ tree<Element>* RtreeAddElement(tree<Element> *head, Element *e, StatusType *stat
 }
 
 
+/**
+ *
+ * DELETE SECTION
+ *
+ * **/
 
+
+tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+
+    if (head == nullptr || e == nullptr) {
+        *status = FAILURE; // already exists in tree
+        return head;
+    }
+    //choose which id is the condition
+    int id = e->id;
+    if (is_salary)
+        id = e->salary;
+
+    if (id < head->id) {
+        head->left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
+    } else if (id > head->id) {
+        head->right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
+    } else if (is_salary && head->element->id != e->id) {
+        id = e->id;
+        if (id < head->element->id) {
+            head->right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
+        } else if (id > head->element->id) {
+            head->left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
+        }
+    }
+        //found the element to be deleted
+    else {
+
+        //case of 1-0 child
+        tree<Elementy> *temp = nullptr;
+        if (head->left == nullptr || head->right == nullptr) {
+            if (head->left == nullptr && head->right == nullptr) {
+                //make sure that we don't have memory leak at that point, shared ptr suppose to free
+                temp = head;
+                head = nullptr;
+                if (is_deep_delete) {
+                    delete temp->element;
+                    temp->element = nullptr;
+                }
+            } else {
+                temp = head->left ? head->left : head->right;
+                if (is_deep_delete) {
+                    delete head->element;
+                }
+                head->element = temp->element;
+                head->left = temp->left;
+                head->right = temp->right;
+                head->height = temp->height;
+
+                if (is_salary) {
+                    head->id = temp->element->salary;
+                } else
+                    head->id = temp->id;
+            }
+
+            delete temp;
+
+
+            *status = SUCCESS;
+        }
+            //2 child case
+        else {
+            temp = head->right;
+            if (temp != nullptr) {
+                while (temp->left != nullptr) {
+                    temp = temp->left;
+                }
+                if (is_deep_delete) {
+                    delete head->element;
+                    is_deep_delete = false;
+                }
+
+                head->element = temp->element;
+                if (is_salary) {
+                    head->id = temp->element->salary;
+                } else
+                    head->id = temp->id;
+
+                head->right = RtreeDeleteElementRecursively(head->right,
+                                                       temp->element, is_salary, is_deep_delete, status);
+            }
+        }
+    }
+
+    *status = SUCCESS;
+    if (head == nullptr)
+        return nullptr;
+
+
+    int a = getHeight(head->left);
+    int c = getHeight(head->right);
+    head->height = (a > c ? a : c) + 1;
+    int b = getBalance(head);;
+
+    // LL
+    if (b > 1 && getBalance(head->left) >= 0) {
+        return RTright_rot(head);
+    }
+
+    // LR
+    if (b > 1 && getBalance(head->left) < 0) {
+        head->left = RTleft_rot(head->left);
+        return RTright_rot(head);
+    }
+
+    // RR
+    if (b < -1 && getBalance(head->right) <= 0) {
+        return RTleft_rot(head);
+    }
+
+    // RL
+    if (b < -1 && getBalance(head->right) > 0) {
+        head->right = RTright_rot(head->right);
+        return RTleft_rot(head);
+    }
+
+    // do nothing:
+    return head;
+
+}
+
+
+tree<Elementy> *RtreeDeleteElement(tree<Elementy> *&head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+    // need to address deletion of head node at a higher scope (bahootz)
+    if (head->id <= 0) {
+        *status = INVALID_INPUT;
+        return head;
+    }
+    if (e == nullptr) {
+        *status = FAILURE;
+        return head;
+    }
+
+    return RtreeDeleteElementRecursively(head, e, is_salary, is_deep_delete, status);
+
+}
 
 
 

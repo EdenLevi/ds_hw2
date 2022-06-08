@@ -351,8 +351,7 @@ tree<Element> *addElementRecursively(tree<Element> *head, tree<Element> *element
  * @return
  */
 template<class Element>
-tree<Element> *
-deleteElementRecursively(tree<Element> *head, Element *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is_salary, bool is_deep_delete, StatusType *status) {
 
     if (head == nullptr || e == nullptr) {
         *status = FAILURE; // already exists in tree
