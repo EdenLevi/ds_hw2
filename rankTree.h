@@ -69,8 +69,8 @@ tree<Elementy> *RTright_rot(tree<Elementy> *head) {
     // updating x:
     head->left->element->boys += X_new_boys;
 
-    tree<Element> *temp1 = head->left;
-    tree<Element> *temp2 = temp1->right;
+    tree<Elementy> *temp1 = head->left;
+    tree<Elementy> *temp2 = temp1->right;
     temp1->right = head;
     head->left = temp2;
     int a = getHeight(head->left);
@@ -83,7 +83,7 @@ tree<Elementy> *RTright_rot(tree<Elementy> *head) {
     return temp1;
 }
 
-tree<Element> *RtreeAddElementRecursively(tree<Element> *head, tree<Element> *element_tree, int iterator, bool is_salary,
+tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> *element_tree, int iterator, bool is_salary,
                                      StatusType *status) {
     if (head == nullptr) {
         return element_tree;
@@ -182,14 +182,14 @@ tree<Element> *RtreeAddElementRecursively(tree<Element> *head, tree<Element> *el
  * @return
  */
 
-tree<Element>* RtreeAddElement(tree<Element> *head, Element *e, StatusType *status) {
+tree<Elementy>* RtreeAddElement(tree<Elementy> *head, Elementy *e, StatusType *status) {
     if (head == nullptr || e == nullptr || e->salary <= 0) {
         *status = INVALID_INPUT;
         return head;
     }
     try {
-        tree<Element> *t = new tree<Element>(e->salary , e);
-        tree<Element> *T = RtreeAddElementRecursively(head, t, e->salary, true, status);
+        tree<Elementy> *t = new tree<Elementy>(e->salary , e);
+        tree<Elementy> *T = RtreeAddElementRecursively(head, t, e->salary, true, status);
         if (*status != SUCCESS) {
             delete t;
             return nullptr;

@@ -19,7 +19,6 @@ public:
     int id;
     int employee_count;
     int salary; //garbage value
-    Employee* employee_head;
     tree<Employee> *employees_pointers_by_salary;
     Company* parent_company;
 
