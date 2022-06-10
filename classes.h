@@ -51,6 +51,7 @@ public:
         while (cmp->parent_company) {
             if(cmp->parent_company->parent_company) { /// updating highest parent_company (union find)
                 cmp->parent_company = cmp->parent_company->parent_company;
+                cmp->value += cmp->parent_company->value; /// updating company value along union find (except for top)
             }
             cmp = cmp->parent_company;
         }

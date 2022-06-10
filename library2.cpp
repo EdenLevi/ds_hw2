@@ -305,7 +305,35 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary,
                                                 void *averageBumpGrade);
 
-StatusType CompanyValue(void *DS, int companyID, void *standing);
+
+/// NOTE: company value needs to be updated from int to long double to support large numbers & fractions **
+StatusType CompanyValue(void *DS, int companyID, void *standing) {
+    try {
+        auto *DSS = (DataStructure *) DS;
+        if (DS == nullptr || standing == nullptr || companyID <= 0 || companyID > DSS->k) {
+            return INVALID_INPUT;
+        }
+
+        long double val = 0;
+        auto* cmp = DSS->companyArray[companyID];
+        while (cmp->parent_company) {
+            val += cmp->value;
+            if(cmp->parent_company->parent_company) { /// updating highest parent_company (union find)
+                cmp->parent_company = cmp->parent_company->parent_company;
+                cmp->value += cmp->parent_company->value; /// updating company value along union find (except for top)
+            }
+            cmp = cmp->parent_company;
+        }
+        DSS->companyArray[companyID] = cmp;
+        val += cmp->value;
+
+        standing = &val;
+        return SUCCESS;
+    }
+    catch (std::bad_alloc const &) {
+            return ALLOCATION_ERROR;
+    }
+}
 
 /*
  * 20 point Bonus function:
