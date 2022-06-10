@@ -80,7 +80,11 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
     }
 }
 
-StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor);
+StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor){
+    DataStructure* DSS=(DataStructure*)DS;
+    if(DS== nullptr||companyID1<=0||companyID2<=0||companyID2>DSS->k||companyID1>DSS->k)
+        return INVALID_INPUT;
+}
 
 StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) {
     auto *DSS = (DataStructure *) DS;
@@ -140,22 +144,28 @@ StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade) {
     tree<Elementy> *temp = RtreeDeleteElement(cmp->employees_pointers_by_salary, emp->element, &status);
     if (status != SUCCESS)
         return status;
+
     cmp->employees_pointers_by_salary = temp;
     temp = RtreeDeleteElement(DSS->salaries, emp->element, &status);
     if (status != SUCCESS)
         return status;
-    cmp->employees_pointers_by_salary = temp;
+    DSS->salaries=temp;
+
     //update grade
     emp->element->grade += bumpGrade;
 
     //insert employee to DSS and company
+    temp= RtreeAddElement(cmp->employees_pointers_by_salary,emp->element,&status);
+    if (status != SUCCESS)
+        return status;
 
-
-
-
+    cmp->employees_pointers_by_salary=temp;
+    temp= RtreeAddElement(DSS->salaries,emp->element,&status);
+    if (status != SUCCESS)
+        return status;
+    DSS->salaries=temp;
 
     return SUCCESS;
-
 }
 
 StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade);
