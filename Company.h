@@ -5,7 +5,6 @@
 #define DS_HW1_COMPANY_H
 
 #include <memory>
-#include "Employee.h"
 #include "tree.h"
 #include "Elementy.h"
 

@@ -1,5 +1,7 @@
 #include <iostream>
 #include "hashtable.h"
+#include "Company.h"
+#include "Employee.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;

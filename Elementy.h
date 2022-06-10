@@ -5,10 +5,7 @@
 #ifndef DS_HW2_ELEMENTY_H
 #define DS_HW2_ELEMENTY_H
 
-#include "Company.h"
-
-
-class Company;
+#include "Employee.h"
 
 class Elementy {
 public:

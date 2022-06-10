@@ -6,6 +6,7 @@
 #define DS_HW2_HASHTABLE_H
 
 #include "Employee.h"
+#include "tree.h"
 
 #define MAX_MINIMUM 457
 
