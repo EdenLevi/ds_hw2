@@ -17,7 +17,7 @@ public:
     int employee_count;
     int salary; //garbage value
     tree<Elementy> *employees_pointers_by_salary;
-    Company* parent_company;
+    Company *parent_company;
 
     Company(int value, int company_id);
 
@@ -39,27 +39,29 @@ public:
     ~Employee() {
         company = nullptr;
     };
-    Company* getCompany(){
-        Company* cmp= nullptr;
-        while(company->parent_company){
-            cmp=company->parent_company;
+
+    Company *getCompany() {
+        Company *cmp = nullptr;
+        while (company->parent_company) {
+            cmp = company->parent_company;
         }
         return cmp;
     }
+
 private:
-    Company* company; //only update when head employee
+    Company *company; //only update when head employee
 };
 
 class Elementy {
 public:
-    Employee* employee;
+    Employee *employee;
     int id;
     int salary;
     int boys;
     int l_boys;
     int grades_sum_l_boys;
 
-    Elementy(int id, int salary, Employee* employee, int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
+    Elementy(int id, int salary, Employee *employee, int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
 
     ~Elementy() {
         employee = nullptr;
