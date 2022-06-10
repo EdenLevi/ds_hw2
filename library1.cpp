@@ -554,12 +554,7 @@ CombineTree(Company *comp, tree<Employee> *head1, tree<Employee> *head2, int siz
                 i++;
             }
         } else {
-            //   std::cout << "k: " << k << std::endl;
 
-            // std::cout << "tree1[0]->salary: " << ((Employee*)tree1[0])->salary << std::endl;
-            //    std::cout << "tree2[0]->salary: " << ((Employee*)tree2[0])->salary  << std::endl;
-            //   std::cout << "tree1[0]->id: " << ((Employee*)tree1[0])->id  << std::endl;
-            //     std::cout << "tree2[0]->id: " << ((Employee*)tree2[0])->id << std::endl;
             if (tree1[i]->salary > tree2[j]->salary) { // problem
                 merged[k] = tree2[j];
                 merged[k]->company = comp;

@@ -80,10 +80,140 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
     }
 }
 
-StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor){
-    DataStructure* DSS=(DataStructure*)DS;
-    if(DS== nullptr||companyID1<=0||companyID2<=0||companyID2>DSS->k||companyID1>DSS->k)
+/**
+ * the func get an array and convert it to a tree
+ * o(n) - n num of employees (base on preorder)
+ * @param array
+ * @param begin
+ * @param end
+ * @param isSalary
+ * @return
+ */
+tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary) {
+    if (begin > end) {
+        return nullptr;
+    }
+    int mid = (begin + end) / 2;
+    int id = array[mid]->id;
+    if (isSalary)
+        id = array[mid]->salary;
+    tree<Elementy> *head = new tree<Elementy>(id, array[mid]);
+    head->left = arrayToTree(array, begin, mid - 1, isSalary);
+    head->right = arrayToTree(array, mid + 1, end, isSalary);
+
+    int a = getHeight(head->left);
+    int b = getHeight(head->right);
+    head->height = (a > b ? a : b) + 1;
+
+    return head;
+}
+
+/**
+ * the func get 2 trees and combine them to a new one
+ * O(n1+n2) - ni num of employee at i (based on merge sort)
+ */
+/** need to support RANK TREES ** DO NOT FORGET** **/
+tree<Elementy> *
+CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int size1, int size2, StatusType *status,
+            bool isSalary) {
+
+
+    Elementy **tree1 = new Elementy *[size1];
+    Elementy **tree2 = new Elementy *[size2];
+    int index = 0;
+    treeToArray<Elementy>(head1, tree1, &index);
+    int index2 = 0;
+    treeToArray<Elementy>(head2, tree2, &index2);
+
+    clear(head1);
+    clear(head2);
+    index = 0;
+    index2 = 0;
+
+    Elementy **merged = new Elementy *[size1 + size2];
+    int i = 0, j = 0, k = 0;
+    while ((i < size1) && (j < size2)) {
+        if (!isSalary) {
+            if (tree1[i]->id > tree2[j]->id) {
+                merged[k] = tree2[j];
+                merged[k]->company = comp;
+                j++;
+            } else {
+                merged[k] = tree1[i];
+                merged[k]->company = comp;
+                i++;
+            }
+        } else {
+
+            if (tree1[i]->salary > tree2[j]->salary) { // problem
+                merged[k] = tree2[j];
+                merged[k]->company = comp;
+                j++;
+            } else if (tree1[i]->salary < tree2[j]->salary) {
+                merged[k] = tree1[i];
+                merged[k]->company = comp;
+                i++;
+            } else { // equal
+                if (tree1[i]->id < tree2[j]->id) {
+                    merged[k] = tree2[j];
+                    merged[k]->company = comp;
+                    j++;
+                } else {
+                    merged[k] = tree1[i];
+                    merged[k]->company = comp;
+                    i++;
+                }
+            }
+        }
+        k++;
+    }
+
+    while (j < size2) {
+        merged[k] = tree2[j];
+        merged[k]->company = comp;
+        k++;
+        j++;
+    }
+    while (i < size1) {
+        merged[k] = tree1[i];
+        merged[k]->company = comp;
+        k++;
+        i++;
+    }
+
+    tree<Elementy> *new_head = arrayToTree(merged, 0, size2 + size1 - 1, isSalary);
+
+    delete[] tree1;
+
+    delete[] tree2;
+
+    delete[] merged;
+
+    return new_head;
+
+}
+
+StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor) {
+    StatusType status = SUCCESS;
+    DataStructure *DSS = (DataStructure *) DS;
+    if (DS == nullptr || companyID1 <= 0 || companyID2 <= 0 || companyID2 > DSS->k || companyID1 > DSS->k ||
+        companyID1 == companyID2 || factor <= 0)
         return INVALID_INPUT;
+    Company *target = DSS->companyArray[companyID1]->getCompany();
+    Company *acquirer = DSS->companyArray[companyID2]->getCompany();
+    //update company values
+    acquirer->value += ((target->value) * factor);
+    target->value -= acquirer->value;
+    //update parent company of target
+    acquirer->employees_pointers_by_salary = CombineTree(acquirer, target->employees_pointers_by_salary,
+                                                         acquirer->employees_pointers_by_salary, target->employee_count,
+                                                         acquirer->employee_count, status, true);
+    if (status != SUCCESS)
+        return status;
+    acquirer->employee_count += target->employee_count;
+    target->parent_company = acquirer;
+
+    //merge salary tree
 }
 
 StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) {

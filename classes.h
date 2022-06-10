@@ -46,6 +46,17 @@ public:
 
         employees_pointers_by_salary = nullptr;
     };
+    Company *getCompany() {
+        Company *cmp = this;
+        while (cmp->parent_company) {
+            if(cmp->parent_company->parent_company) { /// updating highest parent_company (union find)
+                cmp->parent_company = cmp->parent_company->parent_company;
+            }
+            cmp = cmp->parent_company;
+        }
+        parent_company = cmp;
+        return cmp;
+    }
 
 };
 
