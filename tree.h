@@ -6,9 +6,8 @@
 #define DS_HW1_TREE_H
 
 #include <memory>
-#include "library2.h"
+#include "classes.h"
 
-class Company;
 template<class Element>
 class tree {
 public:

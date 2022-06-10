@@ -4,11 +4,10 @@
 
 #ifndef DS_HW2_HASHTABLE_H
 #define DS_HW2_HASHTABLE_H
-
-#include "Employee.h"
-#include "tree.h"
-
 #define MAX_MINIMUM 457
+#include "library2.h"
+#include "classes.h"
+#include "tree.h"
 
 class Hashtable {
 public:

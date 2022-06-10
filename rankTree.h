@@ -6,7 +6,6 @@
 #define DS_HW2_RANKTREE_H
 
 #include "tree.h"
-#include "Elementy.h"
 
 class rankTree : public tree<Elementy> {
 public:
@@ -203,7 +202,9 @@ rankTree *RtreeAddElement(rankTree *head, Employee *emp, StatusType *status) {
  * **/
 
 
-tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+rankTree<Elementy> *
+RtreeDeleteElementRecursively(rankTtree <Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete,
+                              StatusType *status) {
 
     if (head == nullptr || e == nullptr) {
         *status = FAILURE; // already exists in tree
@@ -323,7 +324,7 @@ tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e,
 }
 
 
-tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+rankTree *RtreeDeleteElement(rankTree *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
     if (head->id <= 0) {
         *status = INVALID_INPUT;
