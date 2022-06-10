@@ -105,7 +105,9 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
 
 StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor);
 
-StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease);
+StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) {
+
+}
 
 StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade);
 
