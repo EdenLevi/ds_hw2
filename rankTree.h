@@ -18,7 +18,10 @@
 
 tree<Elementy> *RTleft_rot(tree<Elementy> *head) {
 
-    int Y_r_boys = head->right->element->boys - head->right->element->l_boys;
+    int Y_r_boys = 0;
+    if(head->right) {
+        Y_r_boys = head->right->element->boys - head->right->element->l_boys;
+    }
 
     // updating y:
     head->right->element->l_boys = head->element->l_boys + 1;
@@ -52,7 +55,10 @@ tree<Elementy> *RTleft_rot(tree<Elementy> *head) {
 
 tree<Elementy> *RTright_rot(tree<Elementy> *head) {
 
-    int X_new_boys = head->right->element->boys + 1;
+    int X_new_boys = 0;
+    if(head->right) {
+        X_new_boys = head->right->element->boys + 1;
+    }
 
     // updating y:
     head->element->l_boys -= (head->left->element->l_boys + 1);

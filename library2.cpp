@@ -233,13 +233,13 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
 
         /// adding employee to both salary trees
         if (((empNode->element->salary) - salaryIncrease) == 0) {
-            Company* c = empNode->element->getCompany();
+            Company *c = empNode->element->getCompany();
             tree<Elementy> *etz = c->employees_pointers_by_salary;
 
             StatusType status = SUCCESS;
             c->employees_pointers_by_salary = RtreeAddElement(etz, empNode->element, &status);
             if (status != SUCCESS) {
-                empNode->element->salary += salaryIncrease;
+                empNode->element->salary -= salaryIncrease;
                 return status;
             }
 
@@ -279,26 +279,28 @@ StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade) {
     temp = RtreeDeleteElement(DSS->salaries, emp->element, &status);
     if (status != SUCCESS)
         return status;
-    DSS->salaries=temp;
+    DSS->salaries = temp;
 
     //update grade
     emp->element->grade += bumpGrade;
 
     //insert employee to DSS and company
-    temp= RtreeAddElement(cmp->employees_pointers_by_salary,emp->element,&status);
+    temp = RtreeAddElement(cmp->employees_pointers_by_salary, emp->element, &status);
     if (status != SUCCESS)
         return status;
 
-    cmp->employees_pointers_by_salary=temp;
-    temp= RtreeAddElement(DSS->salaries,emp->element,&status);
+    cmp->employees_pointers_by_salary = temp;
+    temp = RtreeAddElement(DSS->salaries, emp->element, &status);
     if (status != SUCCESS)
         return status;
-    DSS->salaries=temp;
+    DSS->salaries = temp;
 
     return SUCCESS;
 }
 
-StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade);
+StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade) {
+
+}
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary,
                                                 void *averageBumpGrade);
