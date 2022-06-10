@@ -6,37 +6,10 @@
 #define DS_HW1_TREE_H
 
 #include <memory>
+#include "library2.h"
 #include "classes.h"
 
-template<class Element>
-class tree {
-public:
-    int id; //iterator
-    int height;
-    Element *element;
-    tree<Element> *left;
-    tree<Element> *right;
 
-    tree(int id) : id(id), height(1), element(nullptr), left(nullptr), right(nullptr) {};
-
-    tree(int id, Element *element) : id(id), height(1), element(element), left(nullptr), right(nullptr) {};
-
-    ~tree() {
-        element = nullptr;
-        left = nullptr;
-        right = nullptr;
-    };
-
-
-};
-
-/**
-   * the func erase element from a tree by iterator (can be id or salary in our cases)
-   * @param e
-   * @param iterator
-   * @param status
-   * @return
-   */
 template<class Element>
 tree<Element> *eraseElement(tree<Element> *&head, Element *e, bool is_salary, bool is_deep_delete, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
@@ -54,11 +27,6 @@ tree<Element> *eraseElement(tree<Element> *&head, Element *e, bool is_salary, bo
 }
 
 
-/**
-     * the func clear the tree (deallocate element and tree node)
-     * @tparam Element
-     * @param tree
-     */
 template<class Element>
 void clear_helper(tree<Element> *&tree) {
     if (tree == nullptr) {
@@ -73,12 +41,6 @@ void clear_helper(tree<Element> *&tree) {
     tree = nullptr;
 }
 
-/**
- *
- * @tparam Element
- * @param tree
- * @return
- */
 template<class Element>
 tree<Element> *clear(tree<Element> *&tree) {
     if (tree == nullptr) {
@@ -94,12 +56,6 @@ tree<Element> *clear(tree<Element> *&tree) {
     return nullptr;
 }
 
-/**This Clears Elements too
- *
- * @tparam Element
- * @param tree
- * @return
- */
 template<class Element>
 tree<Element> *clearAll(tree<Element> *&tree) {
     if (tree == nullptr) {
@@ -117,14 +73,6 @@ tree<Element> *clearAll(tree<Element> *&tree) {
     return nullptr;
 }
 
-
-/**
- * the func add element to a tree by iterator (can be id or salary in our cases)
- * @param e
- * @param iterator
- * @param status
- * @return
- */
 template<class Element>
 tree<Element> *addElement(tree<Element> *head, Element *e, int iterator, bool is_salary, StatusType *status) {
     if (head == nullptr || e == nullptr || iterator <= 0) {
@@ -132,7 +80,7 @@ tree<Element> *addElement(tree<Element> *head, Element *e, int iterator, bool is
         return head;
     }
     try {
-        tree<Element> *t = new tree<Element>(iterator, e);
+        auto *t = new tree<Element>(iterator, e);
         tree<Element> *T = addElementRecursively(head, t, iterator, is_salary, status);
         if (*status != SUCCESS) {
             delete t;
@@ -146,13 +94,6 @@ tree<Element> *addElement(tree<Element> *head, Element *e, int iterator, bool is
     }
 }
 
-
-/**
- * the func return the height of a node
- * @tparam Element
- * @param head
- * @return
- */
 template<class Element>
 int getHeight(tree<Element> *head) {
     if (head == nullptr)
@@ -160,12 +101,6 @@ int getHeight(tree<Element> *head) {
     return head->height;
 }
 
-/**
- *
- * @tparam Element
- * @param head
- * @return
- */
 template<class Element>
 int getBalance(tree<Element> *head) {
     if (head == nullptr)
@@ -173,15 +108,6 @@ int getBalance(tree<Element> *head) {
     return (getHeight(head->left) - getHeight(head->right));
 }
 
-
-/**
- *  the func get a tree and id and return the node  of the element. if not found
- * the func return nullptr
- * @tparam Element
- * @param head
- * @param id
- * @return
- */
 template<class Element>
 tree<Element> *findById(tree<Element> *head, int id) {
     if (head == nullptr) {

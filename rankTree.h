@@ -5,14 +5,8 @@
 #ifndef DS_HW2_RANKTREE_H
 #define DS_HW2_RANKTREE_H
 
+#include "library2.h"
 #include "tree.h"
-
-class rankTree : public tree<Elementy> {
-public:
-//  int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
-
-
-};
 
 /**
  * Lrot
@@ -56,7 +50,7 @@ tree<Elementy> *RTleft_rot(tree<Elementy> *head) {
  * @return
  */
 
-rankTree *RTright_rot(rankTree *head) {
+tree<Elementy> *RTright_rot(tree<Elementy> *head) {
 
     int X_new_boys = head->right->element->boys + 1;
 
@@ -82,8 +76,12 @@ rankTree *RTright_rot(rankTree *head) {
     return temp1;
 }
 
-rankTree *RtreeAddElementRecursively(rankTree *head, rankTree *element_tree, int iterator, bool is_salary,
-                                     StatusType *status) {
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
+
+tree<Elementy> *
+RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> *element_tree, int iterator, bool is_salary,
+                           StatusType *status) {
     if (head == nullptr) {
         return element_tree;
     }
@@ -173,14 +171,20 @@ rankTree *RtreeAddElementRecursively(rankTree *head, rankTree *element_tree, int
     return head;
 }
 
-rankTree *RtreeAddElement(rankTree *head, Employee *emp, StatusType *status) {
-    if (head == nullptr || emp == nullptr || emp->salary <= 0) {
+#pragma clang diagnostic pop
+
+tree<Elementy> *RtreeAddElement(tree<Elementy> *head, Employee *emp, StatusType *status) {
+    if (emp == nullptr || emp->salary <= 0) {
         *status = INVALID_INPUT;
         return head;
     }
     try {
-        Elementy* e = new Elementy(emp);
-        tree<Elementy> *t = new tree<Elementy>(e->salary, e);
+        auto *e = new Elementy(emp);
+        auto *t = new tree<Elementy>(e->salary, e);
+        if(head == nullptr) { // tree is empty
+            *status = SUCCESS;
+            return t;
+        }
         tree<Elementy> *T = RtreeAddElementRecursively(head, t, e->salary, true, status);
         if (*status != SUCCESS) {
             delete t;
@@ -195,74 +199,94 @@ rankTree *RtreeAddElement(rankTree *head, Employee *emp, StatusType *status) {
 }
 
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
+
 /**
  *
  * DELETE SECTION
  *
- * **/
+**/
 
-
-rankTree<Elementy> *
-RtreeDeleteElementRecursively(rankTtree <Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete,
-                              StatusType *status) {
+tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete,
+                                              StatusType *status) {
 
     if (head == nullptr || e == nullptr) {
-        *status = FAILURE; // already exists in tree
-        return head;
+        *
+                status = FAILURE; // already exists in tree
+        return
+                head;
     }
-    //choose which id is the condition
+//choose which id is the condition
     int id = e->id;
     if (is_salary)
         id = e->salary;
 
     if (id < head->id) {
-        head->left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
+        head->
+                left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
     } else if (id > head->id) {
-        head->right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
-    } else if (is_salary && head->element->id != e->id) {
+        head->
+                right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
+    } else if (
+            is_salary && head
+                                 ->element->id != e->id) {
         id = e->id;
         if (id < head->element->id) {
-            head->right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
+            head->
+                    right = RtreeDeleteElementRecursively(head->right, e, is_salary, is_deep_delete, status);
         } else if (id > head->element->id) {
-            head->left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
+            head->
+                    left = RtreeDeleteElementRecursively(head->left, e, is_salary, is_deep_delete, status);
         }
     }
-        //found the element to be deleted
+//found the element to be deleted
     else {
 
-        //case of 1-0 child
+//case of 1-0 child
         tree<Elementy> *temp = nullptr;
         if (head->left == nullptr || head->right == nullptr) {
             if (head->left == nullptr && head->right == nullptr) {
-                //make sure that we don't have memory leak at that point, shared ptr suppose to free
+//make sure that we don't have memory leak at that point, shared ptr suppose to free
                 temp = head;
                 head = nullptr;
                 if (is_deep_delete) {
-                    delete temp->element;
-                    temp->element = nullptr;
+                    delete temp->
+                            element;
+                    temp->
+                            element = nullptr;
                 }
             } else {
                 temp = head->left ? head->left : head->right;
                 if (is_deep_delete) {
-                    delete head->element;
+                    delete head->
+                            element;
                 }
-                head->element = temp->element;
-                head->left = temp->left;
-                head->right = temp->right;
-                head->height = temp->height;
+                head->
+                        element = temp->element;
+                head->
+                        left = temp->left;
+                head->
+                        right = temp->right;
+                head->
+                        height = temp->height;
 
                 if (is_salary) {
-                    head->id = temp->element->salary;
+                    head->
+                            id = temp->element->salary;
                 } else
-                    head->id = temp->id;
+                    head->
+                            id = temp->id;
             }
 
-            delete temp;
+            delete
+                    temp;
 
 
-            *status = SUCCESS;
+            *
+                    status = SUCCESS;
         }
-            //2 child case
+//2 child case
         else {
             temp = head->right;
             if (temp != nullptr) {
@@ -270,61 +294,83 @@ RtreeDeleteElementRecursively(rankTtree <Elementy> *head, Elementy *e, bool is_s
                     temp = temp->left;
                 }
                 if (is_deep_delete) {
-                    delete head->element;
+                    delete head->
+                            element;
                     is_deep_delete = false;
                 }
 
-                head->element = temp->element;
+                head->
+                        element = temp->element;
                 if (is_salary) {
-                    head->id = temp->element->salary;
+                    head->
+                            id = temp->element->salary;
                 } else
-                    head->id = temp->id;
+                    head->
+                            id = temp->id;
 
-                head->right = RtreeDeleteElementRecursively(head->right,
-                                                            temp->element, is_salary, is_deep_delete, status);
+                head->
+                        right = RtreeDeleteElementRecursively(head->right,
+                                                              temp->element, is_salary, is_deep_delete, status);
             }
         }
     }
 
-    *status = SUCCESS;
+    *
+            status = SUCCESS;
     if (head == nullptr)
         return nullptr;
 
 
     int a = getHeight(head->left);
     int c = getHeight(head->right);
-    head->height = (a > c ? a : c) + 1;
-    int b = getBalance(head);;
+    head->
+            height = (a > c ? a : c) + 1;
+    int b = getBalance(head);
 
-    // LL
-    if (b > 1 && getBalance(head->left) >= 0) {
-        return RTright_rot(head);
+// LL
+    if (b > 1 &&
+        getBalance(head
+                           ->left) >= 0) {
+        return
+                RTright_rot(head);
     }
 
-    // LR
-    if (b > 1 && getBalance(head->left) < 0) {
-        head->left = RTleft_rot(head->left);
-        return RTright_rot(head);
+// LR
+    if (b > 1 &&
+        getBalance(head
+                           ->left) < 0) {
+        head->
+                left = RTleft_rot(head->left);
+        return
+                RTright_rot(head);
     }
 
-    // RR
-    if (b < -1 && getBalance(head->right) <= 0) {
-        return RTleft_rot(head);
+// RR
+    if (b < -1 &&
+        getBalance(head
+                           ->right) <= 0) {
+        return
+                RTleft_rot(head);
     }
 
-    // RL
+// RL
     if (b < -1 && getBalance(head->right) > 0) {
-        head->right = RTright_rot(head->right);
-        return RTleft_rot(head);
+        head->
+                right = RTright_rot(head->right);
+        return
+                RTleft_rot(head);
     }
 
-    // do nothing:
-    return head;
+// do nothing:
+    return
+            head;
 
 }
 
+#pragma clang diagnostic pop
 
-rankTree *RtreeDeleteElement(rankTree *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+
+tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Employee *e, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
     if (head->id <= 0) {
         *status = INVALID_INPUT;
@@ -334,8 +380,8 @@ rankTree *RtreeDeleteElement(rankTree *head, Elementy *e, bool is_salary, bool i
         *status = FAILURE;
         return head;
     }
-
-    return RtreeDeleteElementRecursively(head, e, is_salary, is_deep_delete, status);
+    tree<Elementy> *elem = findById(head, e->id);
+    return RtreeDeleteElementRecursively(head, elem->element, true, false, status);
 
 }
 

@@ -1,10 +1,8 @@
-//
-// Created by edenl on 07/06/2022.
-//
 
 #ifndef DS_HW2_HASHTABLE_H
 #define DS_HW2_HASHTABLE_H
 #define MAX_MINIMUM 457
+
 #include "library2.h"
 #include "classes.h"
 #include "tree.h"
@@ -28,6 +26,9 @@ public:
         }
         delete[] table;
     }
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 
     StatusType insert(Employee *e) {
         if (e == nullptr || e->id <= 0) {
@@ -53,6 +54,8 @@ public:
         return SUCCESS;
     }
 
+#pragma clang diagnostic pop
+
     StatusType remove(int id) {
         int i = hash(id);
         tree<Employee> *e = findById(table[i], id);
@@ -73,9 +76,12 @@ public:
         return SUCCESS;
     }
 
-    int hash(int id) {
+    int hash(int id) const {
         return (id % magicNumber);
     }
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 
     void rehash() {
         tree<Employee> **temp = this->table;
@@ -85,10 +91,15 @@ public:
         }
     }
 
-    tree<Employee> * findMeInHach(int EmployeeID) {
-        tree<Employee>* etz = table[hash(EmployeeID)];
+#pragma clang diagnostic pop
+
+    tree<Employee> *findMeInHach(int EmployeeID) const {
+        tree<Employee> *etz = table[hash(EmployeeID)];
         return findById<Employee>(etz, EmployeeID);
     }
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
 
     void inOrderCopy(tree<Employee> *oldTree) {
         if (oldTree == nullptr) return;
@@ -97,6 +108,28 @@ public:
         insert(oldTree->element);
     }
 
+#pragma clang diagnostic pop
+
+};
+
+class DataStructure {
+public:
+    explicit DataStructure(int k) : k(k) {
+        companyArray = new Company *[k + 1];
+        for (int i = 0; i <= k; i++) {
+            companyArray[i] = new Company(i, i);
+            //companyArray[i]->value = i;
+        }
+        employees = new Hashtable();
+        salaries = nullptr;
+    }
+
+    ~DataStructure() = default;;
+
+    Company **companyArray;
+    Hashtable *employees;
+    tree<Elementy> *salaries;
+    int k;
 };
 
 #endif //DS_HW2_HASHTABLE_H

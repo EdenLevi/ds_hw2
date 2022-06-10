@@ -5,9 +5,29 @@
 #ifndef DS_HW2_CLASSES_H
 #define DS_HW2_CLASSES_H
 
-#include "tree.h"
-
 class Elementy;
+
+template<class Element>
+class tree {
+public:
+    int id; //iterator
+    int height;
+    Element *element;
+    tree<Element> *left;
+    tree<Element> *right;
+
+    explicit tree(int id) : id(id), height(1), element(nullptr), left(nullptr), right(nullptr) {};
+
+    tree(int id, Element *element) : id(id), height(1), element(element), left(nullptr), right(nullptr) {};
+
+    ~tree() {
+        element = nullptr;
+        left = nullptr;
+        right = nullptr;
+    };
+
+
+};
 
 class Company {
 
@@ -19,7 +39,8 @@ public:
     tree<Elementy> *employees_pointers_by_salary;
     Company *parent_company;
 
-    Company(int value, int company_id);
+    Company(int value, int company_id) : value(value), id(company_id), employee_count(0), salary(-1),
+                                         employees_pointers_by_salary(nullptr), parent_company(nullptr) {}
 
     ~Company() {
 
@@ -34,17 +55,19 @@ public:
     int salary;
     int grade;
 
-    Employee(int id, Company *company, int salary, int grade);
+    Employee(int id, Company *company, int salary = 0, int grade = 0) : id(id), salary(salary), grade(grade),
+                                                                        company(company) {}
 
     ~Employee() {
         company = nullptr;
     };
 
     Company *getCompany() {
-        Company *cmp = nullptr;
-        while (company->parent_company) {
+        Company *cmp = company;
+        while (cmp->parent_company) {
             cmp = company->parent_company;
         }
+        company = cmp;
         return cmp;
     }
 
@@ -61,11 +84,15 @@ public:
     int l_boys;
     int grades_sum_l_boys;
 
-    Elementy(int id, int salary, Employee *employee, int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0);
+    explicit Elementy(Employee *employee, int l_boys = 0, int boys = 0, int grades_sum_l_boys = 0)
+            : employee(employee), id(employee->id), salary(employee->salary), l_boys(l_boys), boys(boys),
+              grades_sum_l_boys(grades_sum_l_boys) {}
 
     ~Elementy() {
         employee = nullptr;
     };
 };
+
+
 
 #endif //DS_HW2_CLASSES_H
