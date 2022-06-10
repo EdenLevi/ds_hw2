@@ -1,7 +1,6 @@
 #include <iostream>
+#include "classes.h"
 #include "hashtable.h"
-#include "Company.h"
-#include "Employee.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;

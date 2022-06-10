@@ -57,7 +57,7 @@ tree<Elementy> *RTleft_rot(tree<Elementy> *head) {
  * @return
  */
 
-tree<Elementy> *RTright_rot(tree<Elementy> *head) {
+rankTree *RTright_rot(rankTree *head) {
 
     int X_new_boys = head->right->element->boys + 1;
 
@@ -83,7 +83,7 @@ tree<Elementy> *RTright_rot(tree<Elementy> *head) {
     return temp1;
 }
 
-tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> *element_tree, int iterator, bool is_salary,
+rankTree *RtreeAddElementRecursively(rankTree *head, rankTree *element_tree, int iterator, bool is_salary,
                                      StatusType *status) {
     if (head == nullptr) {
         return element_tree;
@@ -93,7 +93,7 @@ tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> 
     if (head->id > iterator) {
         head->left = RtreeAddElementRecursively(head->left, element_tree, iterator, is_salary, status);
         head->left->element->l_boys++;
-        head->left->element->grades_sum_l_boys+=element_tree->element->employee->grade;
+        head->left->element->grades_sum_l_boys += element_tree->element->employee->grade;
         head->left->element->boys++;
     } else if (head->id < iterator) {
         head->right = RtreeAddElementRecursively(head->right, element_tree, iterator, is_salary, status);
@@ -109,7 +109,7 @@ tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> 
         } else if (head->element->id < element_tree->element->id) {
             head->left = RtreeAddElementRecursively(head->left, element_tree, iterator, is_salary, status);
             head->left->element->l_boys++;
-            head->left->element->grades_sum_l_boys+=element_tree->element->employee->grade;
+            head->left->element->grades_sum_l_boys += element_tree->element->employee->grade;
             head->left->element->boys++;
         } else {
             *status = FAILURE; // already exists in tree
@@ -152,7 +152,7 @@ tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> 
             }
             // LR
             if (b > 1 && element_tree->element->id < head->left->element->id) {
-                head->left =RTleft_rot(head->left);
+                head->left = RTleft_rot(head->left);
                 return RTright_rot(head);
             }
         }
@@ -174,21 +174,14 @@ tree<Elementy> *RtreeAddElementRecursively(tree<Elementy> *head, tree<Elementy> 
     return head;
 }
 
-/**
- * the func add element to a tree by iterator (can be id or salary in our cases)
- * @param e
- * @param iterator
- * @param status
- * @return
- */
-
-tree<Elementy>* RtreeAddElement(tree<Elementy> *head, Elementy *e, StatusType *status) {
-    if (head == nullptr || e == nullptr || e->salary <= 0) {
+rankTree *RtreeAddElement(rankTree *head, Employee *emp, StatusType *status) {
+    if (head == nullptr || emp == nullptr || emp->salary <= 0) {
         *status = INVALID_INPUT;
         return head;
     }
     try {
-        tree<Elementy> *t = new tree<Elementy>(e->salary , e);
+        Elementy* e = new Elementy(emp);
+        tree<Elementy> *t = new tree<Elementy>(e->salary, e);
         tree<Elementy> *T = RtreeAddElementRecursively(head, t, e->salary, true, status);
         if (*status != SUCCESS) {
             delete t;
@@ -287,7 +280,7 @@ tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e,
                     head->id = temp->id;
 
                 head->right = RtreeDeleteElementRecursively(head->right,
-                                                       temp->element, is_salary, is_deep_delete, status);
+                                                            temp->element, is_salary, is_deep_delete, status);
             }
         }
     }
@@ -344,9 +337,6 @@ tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Elementy *e, bool is_sa
     return RtreeDeleteElementRecursively(head, e, is_salary, is_deep_delete, status);
 
 }
-
-
-
 
 
 #endif //DS_HW2_RANKTREE_H
