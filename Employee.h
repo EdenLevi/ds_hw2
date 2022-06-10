@@ -13,7 +13,6 @@ class Company;
 class Employee {
 public:
     int id;
-    Company* company; //only update when head employee
     int salary;
     int grade;
 
@@ -22,6 +21,15 @@ public:
     ~Employee() {
         company = nullptr;
     };
+    Company* getCompany(){
+        Company* cmp= nullptr;
+        while(company->parent_company){
+            cmp=company->parent_company;
+        }
+        return cmp;
+    }
+private:
+    Company* company; //only update when head employee
 };
 
 

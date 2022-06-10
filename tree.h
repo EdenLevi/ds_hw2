@@ -9,7 +9,6 @@
 #include "library2.h"
 
 class Company;
-
 template<class Element>
 class tree {
 public:

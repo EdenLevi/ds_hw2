@@ -106,10 +106,20 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
 StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double factor);
 
 StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) {
-
 }
 
-StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade);
+StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade){
+    if(DSS== nullptr||employeeID<=0)
+        return INVALID_INPUT;
+    DataStructure *DSS = (DataStructure *) DS;
+    tree<Employee> emp=DSS->employees->findMeInHach(employeeID);
+    if(emp== nullptr)
+        return FAILURE;
+    compId
+    emp.element->grade+=bumpGrade;
+    return SUCCESS;
+
+}
 
 StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade);
 
