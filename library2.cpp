@@ -9,6 +9,7 @@
 #include "Company.h"
 #include "Hashtable.h"
 #include "rankTree.h"
+#include "tree.h"
 #include <iostream>
 
 
@@ -115,7 +116,16 @@ StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade){
     tree<Employee> emp=DSS->employees->findMeInHach(employeeID);
     if(emp== nullptr)
         return FAILURE;
-    compId
+    Company* cmp=emp.element->getCompany();
+    Elementy* elem= findById(cmp->employees_pointers_by_salary,emp.id);
+    if(elem== nullptr)
+        return FAILURE;
+    StatusType status=FAILURE;
+    tree<Elementy>* temp=RtreeDeleteElement(cmp->employees_pointers_by_salary,elem,true,false,&status);
+    if(status != SUCCESS)
+        return status;
+    status=FAILURE;
+    cmp->employees_pointers_by_salary=temp;
     emp.element->grade+=bumpGrade;
     return SUCCESS;
 

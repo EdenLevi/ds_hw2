@@ -330,7 +330,7 @@ tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e,
 }
 
 
-tree<Elementy> *RtreeDeleteElement(tree<Elementy> *&head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
+tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Elementy *e, bool is_salary, bool is_deep_delete, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
     if (head->id <= 0) {
         *status = INVALID_INPUT;

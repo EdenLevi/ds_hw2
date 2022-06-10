@@ -7,6 +7,7 @@
 #include <memory>
 #include "Employee.h"
 #include "tree.h"
+#include "Elementy.h"
 
 using std::shared_ptr;
 
@@ -19,7 +20,7 @@ public:
     int id;
     int employee_count;
     int salary; //garbage value
-    tree<Employee> *employees_pointers_by_salary;
+    tree<Elementy> *employees_pointers_by_salary;
     Company* parent_company;
 
     Company(int value, int company_id);
