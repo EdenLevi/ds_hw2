@@ -111,7 +111,7 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary,
     else
         head->element->l_boys=0;
     head->element->boys=end-begin;
-    head->element->grades_sum_l_boys=sums[end]-sums[begin];
+    head->element->grades_sum_l_boys=sums[mid]-sums[begin];
 
     int a = getHeight(head->left);
     int b = getHeight(head->right);
