@@ -89,7 +89,7 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
  * @param isSalary
  * @return
  */
-tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary) {
+tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary,int* sums) {
     if (begin > end) {
         return nullptr;
     }
@@ -98,8 +98,15 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary)
     if (isSalary)
         id = array[mid]->salary;
     tree<Elementy> *head = new tree<Elementy>(id, array[mid]);
-    head->left = arrayToTree(array, begin, mid - 1, isSalary);
-    head->right = arrayToTree(array, mid + 1, end, isSalary);
+    head->left = arrayToTree(array, begin, mid - 1,, isSalary,sums);
+    head->right = arrayToTree(array, mid + 1, end,, isSalary,sums);
+    if(head->left!= nullptr) {
+        head->element->l_boys = head->left->element->boys + 1;
+    }
+    else
+        head->element->l_boys=0;
+    head->element->boys=end-begin;
+    head->element->grades_sum_l_boys=sums[end]-sums[begin];
 
     int a = getHeight(head->left);
     int b = getHeight(head->right);
@@ -108,18 +115,31 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary)
     return head;
 }
 
+int getTotalSum( tree<Elementy> *head){
+    int tot_sum=0;
+    if(head!= nullptr) {
+        tot_sum = head->element->grades_sum_l_boys + head->element->employee->grade;
+        while (head->right) {
+            tot_sum += head->right->element->grades_sum_l_boys + head->right->element->employee->grade;
+            head = head->right;
+        }
+    }
+    return tot_sum;
+}
+
+
 /**
  * the func get 2 trees and combine them to a new one
  * O(n1+n2) - ni num of employee at i (based on merge sort)
  */
 /** need to support RANK TREES ** DO NOT FORGET** **/
 tree<Elementy> *
-CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int size1, int size2, StatusType *status,
-            bool isSalary) {
+CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int size1, int size2, StatusType *status) {
 
 
     Elementy **tree1 = new Elementy *[size1];
     Elementy **tree2 = new Elementy *[size2];
+    int tot_sum= getTotalSum(head1)+ getTotalSum(head2);
     int index = 0;
     treeToArray<Elementy>(head1, tree1, &index);
     int index2 = 0;
@@ -133,39 +153,23 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
     Elementy **merged = new Elementy *[size1 + size2];
     int i = 0, j = 0, k = 0;
     while ((i < size1) && (j < size2)) {
-        if (!isSalary) {
-            if (tree1[i]->id > tree2[j]->id) {
+            if (tree1[i]->salary > tree2[j]->salary) {
                 merged[k] = tree2[j];
-                merged[k]->company = comp;
-                j++;
-            } else {
-                merged[k] = tree1[i];
-                merged[k]->company = comp;
-                i++;
-            }
-        } else {
-
-            if (tree1[i]->salary > tree2[j]->salary) { // problem
-                merged[k] = tree2[j];
-                merged[k]->company = comp;
                 j++;
             } else if (tree1[i]->salary < tree2[j]->salary) {
                 merged[k] = tree1[i];
-                merged[k]->company = comp;
                 i++;
             } else { // equal
                 if (tree1[i]->id < tree2[j]->id) {
                     merged[k] = tree2[j];
-                    merged[k]->company = comp;
                     j++;
                 } else {
                     merged[k] = tree1[i];
-                    merged[k]->company = comp;
                     i++;
                 }
             }
-        }
-        k++;
+            merged[k]->company = comp;
+            k++;
     }
 
     while (j < size2) {
@@ -181,13 +185,22 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
         i++;
     }
 
-    tree<Elementy> *new_head = arrayToTree(merged, 0, size2 + size1 - 1, isSalary);
+    int* sums=new int[size2 + size1];
+    int sum=0;
+    for(int i=0;i<(size2+size1);i++){
+        sums[i]=sums;
+        sum+=merged[i];
+    }
+
+    tree<Elementy> *new_head = arrayToTree(merged, 0, size2 + size1 - 1, true,sums);
 
     delete[] tree1;
 
     delete[] tree2;
 
     delete[] merged;
+
+    delete[] sums;
 
     return new_head;
 
@@ -201,19 +214,22 @@ StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double facto
         return INVALID_INPUT;
     Company *target = DSS->companyArray[companyID1]->getCompany();
     Company *acquirer = DSS->companyArray[companyID2]->getCompany();
-    //update company values
+    //update company value
     acquirer->value += ((target->value) * factor);
     target->value -= acquirer->value;
-    //update parent company of target
-    acquirer->employees_pointers_by_salary = CombineTree(acquirer, target->employees_pointers_by_salary,
+    //merge salary tree
+    tree<Elementy>* temp = CombineTree(acquirer, target->employees_pointers_by_salary,
                                                          acquirer->employees_pointers_by_salary, target->employee_count,
                                                          acquirer->employee_count, status, true);
     if (status != SUCCESS)
         return status;
+    acquirer->employees_pointers_by_salary=temp;
+    target->employees_pointers_by_salary= nullptr;
+    //update parent company of target
     acquirer->employee_count += target->employee_count;
     target->parent_company = acquirer;
+    return SUCCESS;
 
-    //merge salary tree
 }
 
 StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) {
@@ -326,8 +342,7 @@ StatusType CompanyValue(void *DS, int companyID, void *standing) {
         }
         DSS->companyArray[companyID] = cmp;
         val += cmp->value;
-
-        standing = &val;
+        *standing = val;
         return SUCCESS;
     }
     catch (std::bad_alloc const &) {
