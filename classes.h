@@ -87,6 +87,10 @@ public:
         return cmp;
     }
 
+    void* setCompany(Company* cmp) {
+        this->company = cmp;
+    }
+
 private:
     Company *company; //only update when head employee
 };

@@ -103,8 +103,8 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary,
     if (isSalary)
         id = array[mid]->salary;
     tree<Elementy> *head = new tree<Elementy>(id, array[mid]);
-    head->left = arrayToTree(array, begin, mid - 1,, isSalary,sums);
-    head->right = arrayToTree(array, mid + 1, end,, isSalary,sums);
+    head->left = arrayToTree(array, begin, mid - 1, isSalary,sums);
+    head->right = arrayToTree(array, mid + 1, end, isSalary,sums);
     if(head->left!= nullptr) {
         head->element->l_boys = head->left->element->boys + 1;
     }
@@ -192,7 +192,7 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
                     i++;
                 }
             }
-            merged[k]->company = comp;
+            merged[k]->employee->setCompany(comp);
             k++;
     }
 
