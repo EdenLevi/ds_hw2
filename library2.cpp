@@ -120,6 +120,8 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary,
     return head;
 }
 
+
+/// O(log(n))
 int getTotalSum( tree<Elementy> *head){
     int tot_sum=0;
     if(head!= nullptr) {
