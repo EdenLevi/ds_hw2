@@ -80,6 +80,11 @@ StatusType RemoveEmployee(void *DS, int employeeID) {
     }
 }
 
+/// if i'm in right half, the left half is smaller than me and not under me
+/// right half -> remove left half from my grades_sum
+/// left half -> do nothing
+/// need to figure out how to do this for all those that are in the right half without iterating them
+
 /**
  * the func get an array and convert it to a tree
  * o(n) - n num of employees (base on preorder)
