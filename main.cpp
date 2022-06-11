@@ -33,9 +33,11 @@ int main() {
     AddEmployee(DS,4*457,2,10);
 
     EmployeeSalaryIncrease(DS, 457, 15);
-    EmployeeSalaryIncrease(DS, 3*457, 15);
-    EmployeeSalaryIncrease(DS, 2*457, 15);
-    EmployeeSalaryIncrease(DS, 4*457, 15);
+    EmployeeSalaryIncrease(DS, 3*457, 20);
+    EmployeeSalaryIncrease(DS, 2*457, 10);
+    EmployeeSalaryIncrease(DS, 4*457, 5);
+
+    AcquireCompany(DS, 1, 2, 3);
 
     RemoveEmployee(DS,457);
     RemoveEmployee(DS,3*457);

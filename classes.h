@@ -32,7 +32,7 @@ public:
 class Company {
 
 public:
-    int value;
+    long double value;
     int id;
     int employee_count;
     int salary; //garbage value
@@ -55,7 +55,7 @@ public:
             }
             cmp = cmp->parent_company;
         }
-        parent_company = cmp;
+        //parent_company = cmp;
         return cmp;
     }
 
