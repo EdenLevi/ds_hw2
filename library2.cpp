@@ -198,13 +198,13 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
 
     while (j < size2) {
         merged[k] = tree2[j];
-        merged[k]->company = comp;
+        merged[k]->employee->setCompany(comp);
         k++;
         j++;
     }
     while (i < size1) {
         merged[k] = tree1[i];
-        merged[k]->company = comp;
+        merged[k]->employee->setCompany(comp);
         k++;
         i++;
     }
@@ -213,7 +213,7 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
     int sum=0;
     for(int i=0;i<(size2+size1);i++){
         sums[i]=sum;
-        sum+=merged[i];
+        sum+=merged[i]->employee->grade;
     }
 
     tree<Elementy> *new_head = arrayToTree(merged, 0, size2 + size1 - 1, true,sums);
@@ -244,7 +244,7 @@ StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double facto
     //merge salary tree
     tree<Elementy>* temp = CombineTree(acquirer, target->employees_pointers_by_salary,
                                                          acquirer->employees_pointers_by_salary, target->employee_count,
-                                                         acquirer->employee_count, status, true);
+                                                         acquirer->employee_count, &status);
     if (status != SUCCESS)
         return status;
     acquirer->employees_pointers_by_salary=temp;
@@ -366,7 +366,7 @@ StatusType CompanyValue(void *DS, int companyID, void *standing) {
         }
         DSS->companyArray[companyID] = cmp;
         val += cmp->value;
-        *standing = val;
+        *(long double *)standing = val;
         return SUCCESS;
     }
     catch (std::bad_alloc const &) {
