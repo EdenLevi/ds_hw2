@@ -133,6 +133,23 @@ int getTotalSum( tree<Elementy> *head){
 }
 
 
+/// O(log(n))
+int getRank(tree<Elementy> *head,int id){
+    int rank=0;
+    while(head){
+        if(head->id==id){
+            return rank+head->element->l_boys;
+        } else if(head->id<id){
+            rank+=head->element->l_boys+1;
+            head=head->right;
+        }
+        else
+            head=head->left;
+    }
+    return -1;
+}
+
+
 /**
  * the func get 2 trees and combine them to a new one
  * O(n1+n2) - ni num of employee at i (based on merge sort)
@@ -193,7 +210,7 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
     int* sums=new int[size2 + size1];
     int sum=0;
     for(int i=0;i<(size2+size1);i++){
-        sums[i]=sums;
+        sums[i]=sum;
         sum+=merged[i];
     }
 
