@@ -57,7 +57,7 @@ tree<Element> *clear(tree<Element> *&tree) {
 }
 
 template<class Element>
-tree<Element> *clearAll(tree<Element> *&tree) {
+tree<Element> *clearAll(tree<Element> *tree) {
     if (tree == nullptr) {
         return nullptr;
     }
@@ -119,6 +119,28 @@ tree<Element> *findById(tree<Element> *head, int id) {
         return findById(head->right, id);
     } else if (head->id > id && head->left != nullptr) {
         return findById(head->left, id);
+    }
+    return nullptr;
+}
+
+tree<Elementy> *findBySalary(tree<Elementy> *head, Employee* emp) {
+    if (head == nullptr||emp== nullptr) {
+        return head;
+    }
+    if (head->id == emp->salary) {
+      if(head->element->id==emp->id){
+          return head;
+      }
+      else if (head->element->id > emp->id && head->right != nullptr) {
+          return findBySalary(head->right, emp);
+      } else if (head->element->id < emp->id && head->left != nullptr) {
+          return findBySalary(head->left, emp);
+      }
+
+    } else if (head->id < emp->salary && head->right != nullptr) {
+        return findBySalary(head->right, emp);
+    } else if (head->id > emp->salary && head->left != nullptr) {
+        return findBySalary(head->left, emp);
     }
     return nullptr;
 }

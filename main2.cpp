@@ -19,6 +19,7 @@
 #include <string.h>
 #include "library2.h"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -139,7 +140,7 @@ static errorType OnPromoteEmployee(void *DS, const char *const command);
 static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void *DS, const char *const command);
 static errorType OnAverageBumpGradeBetweenSalaryByGroup(void *DS, const char *const command);
 static errorType OnCompanyValue(void *DS, const char *const command);
-static errorType OnBumpGradeToEmployees(void *DS, const char *const command);
+//static errorType OnBumpGradeToEmployees(void *DS, const char *const command);
 static errorType OnQuit(void **DS, const char *const command);
 
 /***************************************************************************/
@@ -182,9 +183,9 @@ static errorType parser(const char *const command) {
         case (COMPANY_VALUE_CMD):
             rtn_val = OnCompanyValue(DS, command_args);
             break;
-        case (BUMP_GRADE_TO_EMPLOYEES_CMD):
+        /*case (BUMP_GRADE_TO_EMPLOYEES_CMD):
             rtn_val = OnBumpGradeToEmployees(DS, command_args);
-            break;
+            break;*/
         case (QUIT_CMD):
             rtn_val = OnQuit(&DS, command_args);
             break;
@@ -357,9 +358,11 @@ static errorType OnAverageBumpGradeBetweenSalaryByGroup(void *DS, const char *co
 
     if (res != SUCCESS) {
         printf("AverageBumpGradeBetweenSalaryByGroup: %s\n", ReturnValToStr(res));
+
         return error_free;
     }
-
+    float average = *(float*)averageBumpGrade;
+    printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", floor(10 * average + 0.5f) / 10);
     /*
      * Implement here the printing of the variable
      */
@@ -385,6 +388,7 @@ static errorType OnCompanyValue(void *DS, const char *const command) {
     /*
      * Implement here the printing of the variable
      */
+    printf("CompanyValue: %d\n", *((int*)(standing)));
 
     return error_free;
 }

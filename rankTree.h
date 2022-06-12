@@ -378,7 +378,7 @@ tree<Elementy> *RtreeDeleteElementRecursively(tree<Elementy> *head, Elementy *e,
 
 tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Employee *e, StatusType *status) {
     // need to address deletion of head node at a higher scope (bahootz)
-    if (head->id <= 0) {
+    if (head==nullptr || head->id <= 0) {
         *status = INVALID_INPUT;
         return head;
     }
@@ -386,7 +386,11 @@ tree<Elementy> *RtreeDeleteElement(tree<Elementy> *head, Employee *e, StatusType
         *status = FAILURE;
         return head;
     }
-    tree<Elementy> *elem = findById(head, e->id);
+    tree<Elementy> *elem = findBySalary(head, e);
+    if(elem == nullptr) {
+        *status = FAILURE;
+        return head;
+    }
     return RtreeDeleteElementRecursively(head, elem->element, true, false, status);
 
 }

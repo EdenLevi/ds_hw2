@@ -32,14 +32,14 @@ public:
 class Company {
 
 public:
-    long double value;
+    int value;
     int id;
     int employee_count;
     int salary; //garbage value
     tree<Elementy> *employees_pointers_by_salary;
     Company *parent_company;
 
-    Company(long double value, int company_id) : value(value), id(company_id), employee_count(0), salary(-1),
+    Company(int value, int company_id) : value(value), id(company_id), employee_count(0), salary(-1),
                                          employees_pointers_by_salary(nullptr), parent_company(nullptr) {}
 
     ~Company() {
@@ -87,7 +87,7 @@ public:
         return cmp;
     }
 
-    void* setCompany(Company* cmp) {
+    void setCompany(Company* cmp) {
         this->company = cmp;
     }
 

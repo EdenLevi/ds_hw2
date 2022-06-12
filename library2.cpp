@@ -120,7 +120,11 @@ tree<Elementy> *arrayToTree(Elementy **array, int begin, int end, bool isSalary,
     return head;
 }
 
-
+int getcountElement(tree<Elementy>* etz){
+    if(etz== nullptr)
+        return 0;
+    return etz->element->boys+1;
+}
 /// O(log(n))
 int getTotalSum( tree<Elementy> *head){
     int tot_sum=0;
@@ -236,15 +240,15 @@ StatusType AcquireCompany(void *DS, int companyID1, int companyID2, double facto
     if (DS == nullptr || companyID1 <= 0 || companyID2 <= 0 || companyID2 > DSS->k || companyID1 > DSS->k ||
         companyID1 == companyID2 || factor <= 0)
         return INVALID_INPUT;
-    Company *target = DSS->companyArray[companyID1]->getCompany();
-    Company *acquirer = DSS->companyArray[companyID2]->getCompany();
+    Company *target = DSS->companyArray[companyID2]->getCompany();
+    Company *acquirer = DSS->companyArray[companyID1]->getCompany();
     //update company value
     acquirer->value += ((target->value) * factor);
     target->value -= acquirer->value;
     //merge salary tree
     tree<Elementy>* temp = CombineTree(acquirer, target->employees_pointers_by_salary,
-                                                         acquirer->employees_pointers_by_salary, target->employee_count,
-                                                         acquirer->employee_count, &status);
+                                                         acquirer->employees_pointers_by_salary, getcountElement(target->employees_pointers_by_salary),
+                                       getcountElement(acquirer->employees_pointers_by_salary), &status);
     if (status != SUCCESS)
         return status;
     acquirer->employees_pointers_by_salary=temp;
@@ -272,12 +276,12 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
         empNode->element->salary += salaryIncrease;
 
         /// adding employee to both salary trees
+        Company *c = empNode->element->getCompany();
+
         if (((empNode->element->salary) - salaryIncrease) == 0) {
-            Company *c = empNode->element->getCompany();
-            tree<Elementy> *etz = c->employees_pointers_by_salary;
 
             StatusType status = SUCCESS;
-            c->employees_pointers_by_salary = RtreeAddElement(etz, empNode->element, &status);
+            c->employees_pointers_by_salary = RtreeAddElement(c->employees_pointers_by_salary, empNode->element, &status);
             if (status != SUCCESS) {
                 empNode->element->salary -= salaryIncrease;
                 return status;
@@ -285,7 +289,7 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
 
             DSS->salaries = RtreeAddElement(DSS->salaries, empNode->element, &status);
             if (status != SUCCESS) {
-                c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
+                c->employees_pointers_by_salary = RtreeDeleteElement(c->employees_pointers_by_salary, empNode->element, &status);
                 empNode->element->salary -= salaryIncrease;
                 return status;
             }
@@ -296,35 +300,20 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
 
             /// Delete employee from current trees
             StatusType status = SUCCESS;
-            c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
+            c->employees_pointers_by_salary = RtreeDeleteElement(c->employees_pointers_by_salary, empNode->element, &status);
             if (status != SUCCESS) {
-                empNode->element->salary -= salaryIncrease;
                 return status;
             }
 
-            DSS->salaries = RtreeAddElement(DSS->salaries, empNode->element, &status);
+            DSS->salaries = RtreeDeleteElement(DSS->salaries, empNode->element, &status);
             if (status != SUCCESS) {
-                c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
-                empNode->element->salary -= salaryIncrease;
+                c->employees_pointers_by_salary = RtreeAddElement(c->employees_pointers_by_salary, empNode->element, &status);
                 return status;
             }
 
             /// Re-added employee to trees
-            StatusType status = SUCCESS;
-            c->employees_pointers_by_salary = RtreeAddElement(etz, empNode->element, &status);
-            if (status != SUCCESS) {
-                empNode->element->salary -= salaryIncrease;
-                return status;
-            }
-
-            DSS->salaries = RtreeAddElement(DSS->salaries, empNode->element, &status);
-            if (status != SUCCESS) {
-                c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
-                empNode->element->salary -= salaryIncrease;
-                return status;
-            }
-
-            empNode->element->salary += salaryIncrease;
+            status = EmployeeSalaryIncrease(DS, employeeID, salaryIncrease);
+            return status;
         }
         return SUCCESS;
     }
@@ -342,46 +331,45 @@ StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade) {
     if (emp == nullptr)
         return FAILURE;
 
-    Company *cmp = emp->element->getCompany();
-    StatusType status = FAILURE;
-    tree<Elementy> *temp = RtreeDeleteElement(cmp->employees_pointers_by_salary, emp->element, &status);
-    if (status != SUCCESS)
-        return status;
+    if(emp->element->salary > 0) {
+        Company *cmp = emp->element->getCompany();
+        StatusType status = FAILURE;
+        tree<Elementy> *temp = RtreeDeleteElement(cmp->employees_pointers_by_salary, emp->element, &status);
+        if (status != SUCCESS)
+            return status;
 
-    cmp->employees_pointers_by_salary = temp;
-    temp = RtreeDeleteElement(DSS->salaries, emp->element, &status);
-    if (status != SUCCESS)
-        return status;
-    DSS->salaries = temp;
+        cmp->employees_pointers_by_salary = temp;
+        temp = RtreeDeleteElement(DSS->salaries, emp->element, &status);
+        if (status != SUCCESS)
+            return status;
+        DSS->salaries = temp;
+
 
     //update grade
     emp->element->grade += bumpGrade;
 
-    //insert employee to DSS and company
-    temp = RtreeAddElement(cmp->employees_pointers_by_salary, emp->element, &status);
-    if (status != SUCCESS)
-        return status;
+        //insert employee to DSS and company
+        temp = RtreeAddElement(cmp->employees_pointers_by_salary, emp->element, &status);
+        if (status != SUCCESS)
+            return status;
 
-    cmp->employees_pointers_by_salary = temp;
-    temp = RtreeAddElement(DSS->salaries, emp->element, &status);
-    if (status != SUCCESS)
-        return status;
-    DSS->salaries = temp;
+        cmp->employees_pointers_by_salary = temp;
+        temp = RtreeAddElement(DSS->salaries, emp->element, &status);
+        if (status != SUCCESS)
+            return status;
+        DSS->salaries = temp;
+    }
+    else  emp->element->grade += bumpGrade;
 
     return SUCCESS;
 }
-int getcountElement(tree<Elementy>* etz){
-    if(etz== nullptr)
-        return 0;
-    return etz->element->boys+1;
-}
 
 StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade) {
+    auto *DSS = (DataStructure *) DS;
     try {
     if (DS== nullptr||sumBumpGrade== nullptr||companyID > DSS->k || companyID <0 || m <= 0) {
         return INVALID_INPUT;
     }
-    auto *DSS = (DataStructure *) DS;
     tree<Elementy> *etz = nullptr;
     int emp_count = 0;
     //case of all employes in DB
@@ -391,10 +379,9 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
     }
         //case of specific Company
     else {
-        tree<Company> *comp = findById<Company>(DSS->companyArray, companyID);
-        assert(comp != nullptr);
-        comp = comp->element->getCompany();
-        etz = comp->element->employees_pointers_by_salary;
+        Company *comp = DSS->companyArray[companyID];
+        comp = comp->getCompany();
+        etz = comp->employees_pointers_by_salary;
         emp_count = getcountElement(etz);
     }
 
@@ -402,7 +389,7 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
         return FAILURE;
 
     tree<Elementy> *ptr_etz = etz;
-    float delta = 0; int partition = m;
+    int delta = 0; int partition = m;
     while (partition > 0) {
         if ((ptr_etz->element->boys + 1) > (partition / 2))
             ptr_etz = ptr_etz->left;
@@ -412,7 +399,7 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
         }
         partition = partition / 2;
     }
-    *((float *) sumBumpGrade) = getTotalSum(etz) - delta;
+    *((int *) sumBumpGrade) = getTotalSum(etz) - delta;
     return SUCCESS;
     }
     catch (std::bad_alloc const &) {
@@ -422,12 +409,12 @@ StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary,
                                                 void *averageBumpGrade){
+    auto *DSS = (DataStructure *) DS;
     try {
-        if (DS== nullptr||averageBumpGrade== nullptr||companyID > DSS->k || companyID <0 || m <= 0||higherSalary<0||
+        if (DS== nullptr||averageBumpGrade== nullptr||companyID > DSS->k || companyID <0 || higherSalary<0||
                     lowerSalary<0||lowerSalary>higherSalary) {
             return INVALID_INPUT;
         }
-        auto *DSS = (DataStructure *) DS;
         tree<Elementy> *etz = nullptr;
         int emp_addition=0;
         //case of all employes in DB
@@ -439,17 +426,16 @@ StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int low
         }
             //case of specific Company
         else {
-            tree<Company> *comp = findById<Company>(DSS->companyArray, companyID);
-            assert(comp != nullptr);
-            comp = comp->element->getCompany();
-            etz = comp->element->employees_pointers_by_salary;
+            Company *comp = DSS->companyArray[companyID];
+            comp = comp->getCompany();
+            etz = comp->employees_pointers_by_salary;
             if(lowerSalary==0){
-                emp_addition= comp->element->employee_count-getcountElement(etz);
+                emp_addition= comp->employee_count-getcountElement(etz);
             }
         }
 
         tree<Elementy> *ptr_etz=etz;
-        float delta_neg=0,delta_pos=0;
+        int delta_neg=0,delta_pos=0;
         int emp_neg=0,emp_pos=0;
 
         while(ptr_etz){
@@ -457,7 +443,7 @@ StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int low
                 ptr_etz=ptr_etz->left;
             }
             else{
-                delta_neg+=ptr_etz->element->grades_sum_l_boys+ptr_etz->element->employee->grade;
+                delta_neg += ptr_etz->element->grades_sum_l_boys+ptr_etz->element->employee->grade;
                 emp_neg+=ptr_etz->element->l_boys+1;
                 ptr_etz=ptr_etz->right;
             }
@@ -473,7 +459,8 @@ StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int low
                 ptr_etz=ptr_etz->left;
             }
         }
-
+        if(emp_addition+emp_pos-emp_neg==0)
+            return FAILURE;
         *((float *)averageBumpGrade)=(delta_pos-delta_neg)/(emp_addition+emp_pos-emp_neg);
         return SUCCESS;
 
@@ -492,7 +479,7 @@ StatusType CompanyValue(void *DS, int companyID, void *standing) {
             return INVALID_INPUT;
         }
 
-        long double val = 0;
+        int val = 0;
         auto* cmp = DSS->companyArray[companyID];
         while (cmp->parent_company) {
             val += cmp->value;
@@ -504,7 +491,8 @@ StatusType CompanyValue(void *DS, int companyID, void *standing) {
         }
         DSS->companyArray[companyID] = cmp;
         val += cmp->value;
-        *(long double *)standing = val;
+        //(*((int *)standing)) = val;
+        *((int**)standing) = new int(val);
         return SUCCESS;
     }
     catch (std::bad_alloc const &) {
