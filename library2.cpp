@@ -290,9 +290,42 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
                 return status;
             }
         }
+        else { // if employee already had salary
+            empNode->element->salary -= salaryIncrease;
 
-        /// updating employee salary
-        empNode->element->salary += salaryIncrease;
+
+            /// Delete employee from current trees
+            StatusType status = SUCCESS;
+            c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
+            if (status != SUCCESS) {
+                empNode->element->salary -= salaryIncrease;
+                return status;
+            }
+
+            DSS->salaries = RtreeAddElement(DSS->salaries, empNode->element, &status);
+            if (status != SUCCESS) {
+                c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
+                empNode->element->salary -= salaryIncrease;
+                return status;
+            }
+
+            /// Re-added employee to trees
+            StatusType status = SUCCESS;
+            c->employees_pointers_by_salary = RtreeAddElement(etz, empNode->element, &status);
+            if (status != SUCCESS) {
+                empNode->element->salary -= salaryIncrease;
+                return status;
+            }
+
+            DSS->salaries = RtreeAddElement(DSS->salaries, empNode->element, &status);
+            if (status != SUCCESS) {
+                c->employees_pointers_by_salary = RtreeDeleteElement(etz, empNode->element, &status);
+                empNode->element->salary -= salaryIncrease;
+                return status;
+            }
+
+            empNode->element->salary += salaryIncrease;
+        }
         return SUCCESS;
     }
     catch (std::bad_alloc const &) {
