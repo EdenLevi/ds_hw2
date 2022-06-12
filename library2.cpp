@@ -337,14 +337,119 @@ StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade) {
 
     return SUCCESS;
 }
+int getcountElement(tree<Elementy>* etz){
+    if(etz== nullptr)
+        return 0;
+    return etz->element->boys+1;
+}
 
 StatusType SumOfBumpGradeBetweenTopWorkersByGroup(void *DS, int companyID, int m, void *sumBumpGrade) {
+    try {
+    if (DS== nullptr||sumBumpGrade== nullptr||companyID > DSS->k || companyID <0 || m <= 0) {
+        return INVALID_INPUT;
+    }
+    auto *DSS = (DataStructure *) DS;
+    tree<Elementy> *etz = nullptr;
+    int emp_count = 0;
+    //case of all employes in DB
+    if (companyID == 0) {
+        etz = DSS->salaries;
+        emp_count = getcountElement(etz);
+    }
+        //case of specific Company
+    else {
+        tree<Company> *comp = findById<Company>(DSS->companyArray, companyID);
+        assert(comp != nullptr);
+        comp = comp->element->getCompany();
+        etz = comp->element->employees_pointers_by_salary;
+        emp_count = getcountElement(etz);
+    }
 
+    if (m > emp_count)
+        return FAILURE;
+
+    tree<Elementy> *ptr_etz = etz;
+    float delta = 0; int partition = m;
+    while (partition > 0) {
+        if ((ptr_etz->element->boys + 1) > (partition / 2))
+            ptr_etz = ptr_etz->left;
+        else {
+            delta += ptr_etz->element->grades_sum_l_boys += ptr_etz->element->employee->grade;
+            ptr_etz = ptr_etz->right;
+        }
+        partition = partition / 2;
+    }
+    *((float *) sumBumpGrade) = getTotalSum(etz) - delta;
+    return SUCCESS;
+    }
+    catch (std::bad_alloc const &) {
+            return ALLOCATION_ERROR;
+    }
 }
 
 StatusType AverageBumpGradeBetweenSalaryByGroup(void *DS, int companyID, int lowerSalary, int higherSalary,
-                                                void *averageBumpGrade);
+                                                void *averageBumpGrade){
+    try {
+        if (DS== nullptr||averageBumpGrade== nullptr||companyID > DSS->k || companyID <0 || m <= 0||higherSalary<0||
+                    lowerSalary<0||lowerSalary>higherSalary) {
+            return INVALID_INPUT;
+        }
+        auto *DSS = (DataStructure *) DS;
+        tree<Elementy> *etz = nullptr;
+        int emp_addition=0;
+        //case of all employes in DB
+        if (companyID == 0) {
+            etz = DSS->salaries;
+            if(lowerSalary==0){
+                emp_addition= DSS->employees->counter-getcountElement(etz);
+            }
+        }
+            //case of specific Company
+        else {
+            tree<Company> *comp = findById<Company>(DSS->companyArray, companyID);
+            assert(comp != nullptr);
+            comp = comp->element->getCompany();
+            etz = comp->element->employees_pointers_by_salary;
+            if(lowerSalary==0){
+                emp_addition= comp->element->employee_count-getcountElement(etz);
+            }
+        }
 
+        tree<Elementy> *ptr_etz=etz;
+        float delta_neg=0,delta_pos=0;
+        int emp_neg=0,emp_pos=0;
+
+        while(ptr_etz){
+            if(ptr_etz->element->salary>=lowerSalary){
+                ptr_etz=ptr_etz->left;
+            }
+            else{
+                delta_neg+=ptr_etz->element->grades_sum_l_boys+ptr_etz->element->employee->grade;
+                emp_neg+=ptr_etz->element->l_boys+1;
+                ptr_etz=ptr_etz->right;
+            }
+        }
+        ptr_etz=etz;
+        while(ptr_etz){
+            if(ptr_etz->element->salary<=higherSalary){
+                delta_pos+=ptr_etz->element->grades_sum_l_boys+ptr_etz->element->employee->grade;
+                emp_pos+=ptr_etz->element->l_boys+1;
+                ptr_etz=ptr_etz->right;
+            }
+            else{
+                ptr_etz=ptr_etz->left;
+            }
+        }
+
+        *((float *)averageBumpGrade)=(delta_pos-delta_neg)/(emp_addition+emp_pos-emp_neg);
+        return SUCCESS;
+
+    }
+    catch (std::bad_alloc const &) {
+        return ALLOCATION_ERROR;
+    }
+
+    }
 
 /// NOTE: company value needs to be updated from int to long double to support large numbers & fractions **
 StatusType CompanyValue(void *DS, int companyID, void *standing) {
@@ -379,4 +484,20 @@ StatusType CompanyValue(void *DS, int companyID, void *standing) {
 StatusType BumpGradeToEmployees(void *DS, int lowerSalary, int higherSalary, int bumpGrade);
  */
 
-void Quit(void **DS);
+
+void Quit(void **DS){
+    DataStructure *DSS = ((DataStructure *) *DS);
+    clearAll(DSS->salaries);
+    for(int i=0;i<DSS->k;i++){
+        clearAll(DSS->companyArray[i]->employees_pointers_by_salary);
+        delete DSS->companyArray[i];
+    }
+
+    delete [] DSS->companyArray;
+    delete  DSS->employees;
+     DSS->companyArray= nullptr;
+     DSS->employees= nullptr;
+     DSS->salaries= nullptr;
+    delete DSS;
+    *DS = nullptr;
+}
