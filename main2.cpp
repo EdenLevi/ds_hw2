@@ -340,6 +340,7 @@ static errorType OnSumOfBumpGradeBetweenTopWorkersByGroup(void *DS, const char *
     /*
      * Implement here the printing of the variable
      */
+    printf("SumOfBumpGradeBetweenTopWorkersByGroup: %d\n", sumBumpGrade);
     return error_free;
 }
 
@@ -361,8 +362,8 @@ static errorType OnAverageBumpGradeBetweenSalaryByGroup(void *DS, const char *co
 
         return error_free;
     }
-    float average = *(float*)averageBumpGrade;
-    printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", floor(10 * average + 0.5f) / 10);
+    double* average = (double *)&averageBumpGrade;
+    printf("AverageBumpGradeBetweenSalaryByGroup: %.1f\n", floor(10 * (*average) + 0.5f) / 10);
     /*
      * Implement here the printing of the variable
      */
@@ -388,7 +389,8 @@ static errorType OnCompanyValue(void *DS, const char *const command) {
     /*
      * Implement here the printing of the variable
      */
-    printf("CompanyValue: %d\n", *((int*)(standing)));
+    //printf("CompanyValue: %d\n", *((double*)(standing)));
+    printf("CompanyValue: %.1f\n", standing);
 
     return error_free;
 }

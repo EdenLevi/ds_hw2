@@ -424,13 +424,16 @@ tree<Element> *deleteElementRecursively(tree<Element> *head, Element *e, bool is
  * @param dest
  * @param index
  */
-template<class Element>
-void treeToArray(tree<Element> *head, Element **dest, int *index) {
+
+void treeToArray(tree<Elementy> *head, Elementy **dest, int *index) {
     if (head == nullptr) {
         return;
     }
     treeToArray(head->left, dest, index);
     dest[*index] = head->element;
+    head->element->boys = 0;
+    head->element->l_boys = 0;
+    head->element->grades_sum_l_boys = 0;
     (*index)++;
     treeToArray(head->right, dest, index);
 

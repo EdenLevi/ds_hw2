@@ -49,7 +49,7 @@ public:
         counter++;
         if (counter >= magicNumber) {
             magicNumber *= 2;
-            rehash();
+            rehash(true);
         }
         return SUCCESS;
     }
@@ -69,9 +69,9 @@ public:
         }
         table[i] = temp;
         counter--;
-        if (counter <= magicNumber / 2 && magicNumber / 2 >= MAX_MINIMUM) {
+        if ((counter <= magicNumber / 2) && (magicNumber / 2 >= MAX_MINIMUM)) {
             magicNumber /= 2;
-            rehash();
+            rehash(false);
         }
         return SUCCESS;
     }
@@ -83,11 +83,23 @@ public:
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "misc-no-recursion"
 
-    void rehash() {
+    void rehash(bool expand) {
         tree<Employee> **temp = this->table;
         this->table = new tree<Employee> *[this->magicNumber];
-        for (int i = 0; i < (this->magicNumber) / 2; i++) {
-            inOrderCopy(temp[i]);
+
+        for (int i = 0; i < this->magicNumber; i++) {
+            table[i] = nullptr;
+        }
+
+        if(expand) {
+            for (int i = 0; i < (this->magicNumber) / 2; i++) {
+                inOrderCopy(temp[i]);
+            }
+        }
+        else {
+            for (int i = 0; i < (this->magicNumber) * 2; i++) {
+                inOrderCopy(temp[i]);
+            }
         }
     }
 
@@ -122,6 +134,7 @@ public:
         }
         employees = new Hashtable();
         salaries = nullptr;
+        sum_grade_non_salaries=0;
     }
 
     ~DataStructure() = default;;
@@ -129,6 +142,7 @@ public:
     Company **companyArray;
     Hashtable *employees;
     tree<Elementy> *salaries;
+    int sum_grade_non_salaries;
     int k;
 };
 
