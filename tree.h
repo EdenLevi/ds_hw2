@@ -131,9 +131,9 @@ tree<Elementy> *findBySalary(tree<Elementy> *head, Employee* emp) {
       if(head->element->id==emp->id){
           return head;
       }
-      else if (head->element->id > emp->id && head->right != nullptr) {
+      else if (head->element->id < emp->id && head->right != nullptr) {
           return findBySalary(head->right, emp);
-      } else if (head->element->id < emp->id && head->left != nullptr) {
+      } else if (head->element->id > emp->id && head->left != nullptr) {
           return findBySalary(head->left, emp);
       }
 

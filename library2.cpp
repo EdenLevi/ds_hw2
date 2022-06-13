@@ -199,7 +199,7 @@ CombineTree(Company *comp, tree<Elementy> *head1, tree<Elementy> *head2, int siz
             merged[k] = tree1[i];
             i++;
         } else { // equal
-            if (tree1[i]->id < tree2[j]->id) {
+            if (tree1[i]->id > tree2[j]->id) {
                 merged[k] = tree2[j];
                 j++;
             } else {
@@ -357,6 +357,10 @@ StatusType EmployeeSalaryIncrease(void *DS, int employeeID, int salaryIncrease) 
 StatusType PromoteEmployee(void *DS, int employeeID, int bumpGrade) {
     if (DS == nullptr || employeeID <= 0)
         return INVALID_INPUT;
+
+    if(employeeID == 515 && bumpGrade == 1) {
+        int hi = 5;
+    }
 
     auto *DSS = (DataStructure *) DS;
     tree<Employee> *emp = DSS->employees->findMeInHach(employeeID); // employee* in hashtable
